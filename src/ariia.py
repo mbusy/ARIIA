@@ -139,8 +139,16 @@ class SpeechAnalyser:
         self.answer += u" voici la météo. ".encode('utf-8')
 
         for city in self.cityList:
-            # Works for the Ile de France cities, in France, for now
-            url = "http://www.yr.no/place/France/%C3%8Ele-de-France/" + city + "/"
+            #reparameter the city name
+            cityUrl = ""
+
+            for letter in city:
+                if letter.lower().encode("utf-8") == u"é".encode("utf-8"):
+                    cityUrl += "%C3%89"
+                else:
+                    cityUrl += letter
+
+            url = "http://www.yr.no/place/France/%C3%8Ele-de-France/" + cityUrl + "/"
             httpRequest = urllib2.Request(url)
             page = self.opener.open(httpRequest)
             rawdata = page.read()
