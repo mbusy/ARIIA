@@ -94,7 +94,7 @@ class SpeechAnalyser:
 
     def giveHour(self):
         currentTime = time.localtime()
-        self.answer += " Il est actuellement " + str(currentTime[3]) + " heure " + str(currentTime[4])
+        self.answer += " Il est actuellement " + str(currentTime[3]) + " heure " + str(currentTime[4]) + "."
 
     def giveDate(self):
         currentTime = time.localtime()
@@ -124,7 +124,7 @@ class SpeechAnalyser:
         elif currentTime[1] == 12:
             month = "decembre"
         
-        self.answer += " Nous sommes le " + str(currentTime[2]) + month + str(currentTime[0])
+        self.answer += " Nous sommes le " + str(currentTime[2]) + month + str(currentTime[0]) + "."
 
     def giveMeteo(self):
         for word in self.request:
@@ -136,19 +136,31 @@ class SpeechAnalyser:
                     
                     break
 
-        self.answer += u" météo".encode('utf-8')
-
-        if len(self.cityList) > 1:
-            self.answer += " des villes"
-        elif len(self.cityList) == 1:
-            self.answer += " de la ville de"
-        else:
-            self.answer += " introuvable"
-            return
+        self.answer += u" voici la météo. ".encode('utf-8')
 
         for city in self.cityList:
+            # Works for the Ile de France cities, in France, for now
+            url = "http://www.yr.no/place/France/%C3%8Ele-de-France/" + city + "/"
+            httpRequest = urllib2.Request(url)
+            page = self.opener.open(httpRequest)
+            rawdata = page.read()
+            lines_of_data = rawdata.split('\n')
+            special_lines = [line for line in lines_of_data if line.find('og:description')>-1]
+            info = special_lines[0].replace('"','').split('content=')[1]
+            sections = info.split(':')
+            sectionsRefined = sections[3].split(',')
+            
+            for temperatureData in sectionsRefined[1].split(" "):
+                pass
+
+            self.answer += " Il fait"
+            self.answer += temperatureData
+            self.answer += u" degrés à".encode('utf-8')
             self.answer += " " + city.encode('utf-8')
-            #TODO
+            self.answer += "."
+
+            #TODO : Unicode cities
+
 
 
 
