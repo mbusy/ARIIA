@@ -18,6 +18,7 @@ class SpeechAnalyser:
     def __init__(self):
         self.answer    = None
         self.request   = list()
+        self.cityList  = list()
         self.cookieJar = cookielib.CookieJar()
         self.opener    = urllib2.build_opener(urllib2.HTTPCookieProcessor(self.cookieJar))
 
@@ -35,8 +36,9 @@ class SpeechAnalyser:
         self.bSommesNous = False
         self.bMeteo      = False
 
-        #Keywords Lists
-        self.cityList = list()
+        # Flush keywords kists
+        del self.request[:]
+        del self.cityList[:]
 
     def analyseSpeech(self, speech):
 
