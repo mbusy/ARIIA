@@ -23,6 +23,9 @@ class MeteoScrapper:
 	def getMeteo(self, city):
 		"""
 		Get the different meteo parameters for the given city
+
+		Parameters :
+			city - The city targeted
 		"""
 
 		for letter in city:
