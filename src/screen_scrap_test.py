@@ -4,7 +4,7 @@ import cookielib
 cookieJar = cookielib.CookieJar()
 opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookieJar))
 
-city = "Rambouillet"
+city = "Paris"
 
 url = "http://www.yr.no/place/France/%C3%8Ele-de-France/" + city + "/"
 request = urllib2.Request(url)

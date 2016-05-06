@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
-#!/usr/bin/env python3
-
-# NOTE: this example requires PyAudio because it uses the Microphone class
 
 import speech_recognition as sr
 from gtts import gTTS
 import mp3play
 import time
 import urllib2
-import cookielib
+
+import meteo_scrapper as ms
+
 
 class SpeechAnalyser:
     """
@@ -16,12 +15,11 @@ class SpeechAnalyser:
     """
 
     def __init__(self):
-        self.answer    = None
-        self.request   = list()
-        self.cityList  = list()
-        self.keywords  = dict()
-        self.cookieJar = cookielib.CookieJar()
-        self.opener    = urllib2.build_opener(urllib2.HTTPCookieProcessor(self.cookieJar))
+        self.answer        = None
+        self.request       = list()
+        self.cityList      = list()
+        self.meteoScrapper = ms.MeteoScrapper()
+        self.keywords      = dict()
 
         self.resetKeywords()
 
@@ -148,31 +146,13 @@ class SpeechAnalyser:
         self.answer += u" voici la météo : ".encode('utf-8')
 
         for city in self.cityList:
-            #reparameter the city name
-            cityUrl = ""
-
-            for letter in city:
-                if letter.lower().encode("utf-8") == u"é".encode("utf-8"):
-                    cityUrl += "%C3%89"
-                else:
-                    cityUrl += letter
 
             try:
-                url = "http://www.yr.no/place/France/%C3%8Ele-de-France/" + cityUrl + "/"
-                httpRequest = urllib2.Request(url)
-                page = self.opener.open(httpRequest)
-                rawdata = page.read()
-                lines_of_data = rawdata.split('\n')
-                special_lines = [line for line in lines_of_data if line.find('og:description')>-1]
-                info = special_lines[0].replace('"','').split('content=')[1]
-                sections = info.split(':')
-                sectionsRefined = sections[3].split(',')
                 
-                for temperatureData in sectionsRefined[1].split(" "):
-                    pass
+                self.meteoScrapper.getMeteo(city)
 
                 self.answer += " Il fait"
-                self.answer += temperatureData
+                self.answer += self.meteoScrapper.temperature
                 self.answer += u" degrés à".encode('utf-8')
                 self.answer += " " + city.encode('utf-8')
                 self.answer += "."
