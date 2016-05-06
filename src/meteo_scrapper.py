@@ -2,6 +2,7 @@
 
 import urllib2
 import cookielib
+from translate import translator
 
 class MeteoScrapper:
 	"""
@@ -15,7 +16,9 @@ class MeteoScrapper:
 
 		self.city    	 = ""
 		self.cityUrl 	 = ""
+		self.sky         = ""
 		self.temperature = 0.0
+		self.wind        = ""
 
 		self.cookieJar   = cookielib.CookieJar()
 		self.opener      = urllib2.build_opener(urllib2.HTTPCookieProcessor(self.cookieJar))
@@ -48,4 +51,9 @@ class MeteoScrapper:
 		for temperatureData in sectionsRefined[1].split(" "):
 			pass
 
+		self.sky         = translator('en', 'fr', sectionsRefined[0])
 		self.temperature = temperatureData
+		self.wind        = translator('en', 'fr', sectionsRefined[3])
+
+		print self.sky
+		print self.wind
