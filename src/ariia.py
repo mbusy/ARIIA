@@ -28,14 +28,14 @@ class SpeechAnalyser:
     def resetKeywords(self):
 
         # Keaywords Booleans dictionnaire
-        self.keywords["bAria"]       = False
-        self.keywords["bHeure"]      = False
-        self.keywords["bLHeure"]     = False
-        self.keywords["bEst"]        = False
-        self.keywords["bDate"]       = False
-        self.keywords["bJour"]       = False
-        self.keywords["bSommesNous"] = False
-        self.keywords["bMeteo"]      = False
+        self.keywords["Aria"]       = False
+        self.keywords["heure"]      = False
+        self.keywords["lHeure"]     = False
+        self.keywords["est"]        = False
+        self.keywords["date"]       = False
+        self.keywords["jour"]       = False
+        self.keywords["sommesNous"] = False
+        self.keywords["meteo"]      = False
 
         # Flush keywords kists
         del self.request[:]
@@ -51,39 +51,39 @@ class SpeechAnalyser:
 
         for word in self.request:
             if word.lower() == "aria":
-                self.keywords["bAria"] = True
+                self.keywords["Aria"] = True
 
             elif word.lower() == "heure":
-                self.keywords["bHeure"] = True
+                self.keywords["heure"] = True
 
             elif word.lower() == "l'heure":
-                self.keywords["bLHeure"] = True
+                self.keywords["lHeure"] = True
 
             elif word.lower() == "est":
-                self.keywords["bEst"] = True
+                self.keywords["est"] = True
 
             elif word.lower() == "date":
-                self.keywords["bDate"] = True
+                self.keywords["date"] = True
 
             elif word.lower() == "jour":
-                self.keywords["bJour"] = True
+                self.keywords["jour"] = True
 
             elif word.lower() == "sommes-nous":
-                self.keywords["bSommesNous"] = True
+                self.keywords["sommesNous"] = True
             
             elif word.lower() == unicode("météo", 'utf-8'):
-                self.keywords["bMeteo"] = True
+                self.keywords["meteo"] = True
 
-        if self.keywords["bHeure"] and self.keywords["bEst"] or self.keywords["bHeure"] or self.keywords["bLHeure"]:
+        if self.keywords["heure"] and self.keywords["est"] or self.keywords["heure"] or self.keywords["lHeure"]:
             self.giveHour()
 
-        if self.keywords["bDate"] and self.keywords["bEst"] or self.keywords["bDate"] or self.keywords["bJour"] and self.keywords["bSommesNous"]:
+        if self.keywords["date"] and self.keywords["est"] or self.keywords["date"] or self.keywords["jour"] and self.keywords["sommesNous"]:
             self.giveDate()
         
-        if self.keywords["bMeteo"]:
+        if self.keywords["meteo"]:
             self.giveMeteo()
 
-        if len(self.request) == 1 and self.keywords["bAria"]:
+        if len(self.request) == 1 and self.keywords["Aria"]:
             self.basicAnswer()
 
         # Variable for the no keyword detection
@@ -93,7 +93,7 @@ class SpeechAnalyser:
             anyKeywordsDetected = anyKeywordsDetected or keywordDetected
 
         if not anyKeywordsDetected:
-            self.answer = "Je ne comprends pas"
+            self.answer = "Je ne comprends pas."
 
         return self.answer
 
@@ -145,7 +145,7 @@ class SpeechAnalyser:
                     
                     break
 
-        self.answer += u" voici la météo. ".encode('utf-8')
+        self.answer += u" voici la météo : ".encode('utf-8')
 
         for city in self.cityList:
             #reparameter the city name
@@ -157,24 +157,30 @@ class SpeechAnalyser:
                 else:
                     cityUrl += letter
 
-            url = "http://www.yr.no/place/France/%C3%8Ele-de-France/" + cityUrl + "/"
-            httpRequest = urllib2.Request(url)
-            page = self.opener.open(httpRequest)
-            rawdata = page.read()
-            lines_of_data = rawdata.split('\n')
-            special_lines = [line for line in lines_of_data if line.find('og:description')>-1]
-            info = special_lines[0].replace('"','').split('content=')[1]
-            sections = info.split(':')
-            sectionsRefined = sections[3].split(',')
-            
-            for temperatureData in sectionsRefined[1].split(" "):
-                pass
+            try:
+                url = "http://www.yr.no/place/France/%C3%8Ele-de-France/" + cityUrl + "/"
+                httpRequest = urllib2.Request(url)
+                page = self.opener.open(httpRequest)
+                rawdata = page.read()
+                lines_of_data = rawdata.split('\n')
+                special_lines = [line for line in lines_of_data if line.find('og:description')>-1]
+                info = special_lines[0].replace('"','').split('content=')[1]
+                sections = info.split(':')
+                sectionsRefined = sections[3].split(',')
+                
+                for temperatureData in sectionsRefined[1].split(" "):
+                    pass
 
-            self.answer += " Il fait"
-            self.answer += temperatureData
-            self.answer += u" degrés à".encode('utf-8')
-            self.answer += " " + city.encode('utf-8')
-            self.answer += "."
+                self.answer += " Il fait"
+                self.answer += temperatureData
+                self.answer += u" degrés à".encode('utf-8')
+                self.answer += " " + city.encode('utf-8')
+                self.answer += "."
+
+            except urllib2.HTTPError:
+                self.answer += u" Je n'ai pas de données météo pour la ville : ".encode('utf-8')
+                self.answer += " " + city.encode('utf-8')
+                self.answer += "."
 
             #TODO : Unicode cities
 
