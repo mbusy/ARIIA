@@ -9,7 +9,7 @@ import urllib2
 import meteo_scrapper as ms
 
 
-class SpeechAnalyser:
+class Ariia:
     """
     Used to analyse the user speech
     """
@@ -27,13 +27,26 @@ class SpeechAnalyser:
 
         # Keaywords Booleans dictionnaire
         self.keywords["Aria"]       = False
-        self.keywords["heure"]      = False
-        self.keywords["lHeure"]     = False
-        self.keywords["est"]        = False
         self.keywords["date"]       = False
         self.keywords["jour"]       = False
+        self.keywords["heure"]      = False
+        self.keywords["meteo"]      = False        
+        self.keywords["lHeure"]     = False
+
+        self.keywords["est"]        = False
+        self.keywords["es"]         = False
         self.keywords["sommesNous"] = False
-        self.keywords["meteo"]      = False
+        self.keywords["es-tu"]      = False
+        self.keywords["suis-je"]    = False
+        self.keywords["tAppelles"]  = False
+        self.keywords["sais"]       = False
+
+        self.keywords["comment"]    = False
+        self.keywords["qui"]        = False
+
+        self.keywords["faire"]      = False
+
+        self.keywords["tu"]         = False
 
         # Flush keywords kists
         del self.request[:]
@@ -72,6 +85,34 @@ class SpeechAnalyser:
             elif word.lower() == unicode("météo", 'utf-8'):
                 self.keywords["meteo"] = True
 
+            elif word.lower() == "comment":
+                self.keywords["comment"] = True
+
+            elif word.lower() == "t'appelles":
+                self.keywords["tAppelles"] = True
+
+            elif word.lower() == "sais":
+                self.keywords["sais"] = True
+
+            elif word.lower() == "faire":
+                self.keywords["faire"] = True
+
+            elif word.lower() == "es":
+                self.keywords["es"] = True
+
+            elif word.lower() == "qui":
+                self.keywords["qui"] = True
+
+            elif word.lower() == "tu":
+                self.keywords["tu"] = True
+
+            elif word.lower() == "es-tu":
+                self.keywords["es-tu"] = True
+
+            elif word.lower() == "suis-je":
+                self.keywords["suis-je"] = True
+
+
         if self.keywords["heure"] and self.keywords["est"] or self.keywords["heure"] or self.keywords["lHeure"]:
             self.giveHour()
 
@@ -81,23 +122,42 @@ class SpeechAnalyser:
         if self.keywords["meteo"]:
             self.giveMeteo()
 
+        if self.keywords["comment"] and self.keywords["tAppelles"]:
+            self.basicAnswer("aria")
+
         if len(self.request) == 1 and self.keywords["Aria"]:
-            self.basicAnswer()
+            self.basicAnswer("oui")
 
-        # Variable for the no keyword detection
-        anyKeywordsDetected = False
+        if self.keywords["sais"] and self.keywords["faire"]:
+            self.basicAnswer("jeSaisFaire")
 
-        for keywordDetected in self.keywords.values():
-            anyKeywordsDetected = anyKeywordsDetected or keywordDetected
+        if self.keywords["qui"] and self.keywords["es-tu"]:
+            self.basicAnswer("presentationAria")
 
-        if not anyKeywordsDetected:
-            self.answer = "Je ne comprends pas."
+        if self.keywords["qui"] and self.keywords["suis-je"]:
+            self.basicAnswer("presentationHumain")
+
+        if self.answer == "":
+            self.answer = "Je ne comprend pas."
 
         return self.answer
 
 
-    def basicAnswer(self):
-        self.answer = "Oui ?"
+    def basicAnswer(self, answerFlag):
+        if answerFlag == "oui":
+            self.answer = "Oui ?"
+
+        elif answerFlag == "aria":
+            self.answer = " Je m'appelle Aria, avec deux iii."
+
+        elif answerFlag == "jeSaisFaire":
+            self.answer = u"Pour le moment, je ne sais pas faire grand chose. Mais je vais m'améliorer ! ".encode('utf-8')
+
+        elif answerFlag == "presentationAria":
+            self.answer = "Je m'appelle Aria, et je suis une assistance domotique."
+
+        elif answerFlag == "presentationHumain":
+            self.answer = u"Je suis presque sûre que tu es un humain !".encode('utf-8')
 
     def giveHour(self):
         currentTime = time.localtime()
@@ -179,7 +239,7 @@ def main():
     # obtain audio from the microphone
     r = sr.Recognizer()
     m = sr.Microphone()
-    s = SpeechAnalyser()
+    s = Ariia()
 
 
     # Calibration of the noise
