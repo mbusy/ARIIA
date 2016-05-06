@@ -19,6 +19,7 @@ class SpeechAnalyser:
         self.answer    = None
         self.request   = list()
         self.cityList  = list()
+        self.keywords  = dict()
         self.cookieJar = cookielib.CookieJar()
         self.opener    = urllib2.build_opener(urllib2.HTTPCookieProcessor(self.cookieJar))
 
@@ -26,15 +27,15 @@ class SpeechAnalyser:
 
     def resetKeywords(self):
 
-        # Keaywords Booleans
-        self.bAria       = False
-        self.bHeure      = False
-        self.bLHeure     = False
-        self.bEst        = False
-        self.bDate       = False
-        self.bJour       = False
-        self.bSommesNous = False
-        self.bMeteo      = False
+        # Keaywords Booleans dictionnaire
+        self.keywords["bAria"]       = False
+        self.keywords["bHeure"]      = False
+        self.keywords["bLHeure"]     = False
+        self.keywords["bEst"]        = False
+        self.keywords["bDate"]       = False
+        self.keywords["bJour"]       = False
+        self.keywords["bSommesNous"] = False
+        self.keywords["bMeteo"]      = False
 
         # Flush keywords kists
         del self.request[:]
@@ -50,42 +51,48 @@ class SpeechAnalyser:
 
         for word in self.request:
             if word.lower() == "aria":
-                self.bAria = True
+                self.keywords["bAria"] = True
 
             elif word.lower() == "heure":
-                self.bHeure = True
+                self.keywords["bHeure"] = True
 
             elif word.lower() == "l'heure":
-                self.bLHeure = True
+                self.keywords["bLHeure"] = True
 
             elif word.lower() == "est":
-                self.bEst = True
+                self.keywords["bEst"] = True
 
             elif word.lower() == "date":
-                self.bDate = True
+                self.keywords["bDate"] = True
 
             elif word.lower() == "jour":
-                self.bJour = True
+                self.keywords["bJour"] = True
 
             elif word.lower() == "sommes-nous":
-                self.bSommesNous = True
+                self.keywords["bSommesNous"] = True
             
             elif word.lower() == unicode("météo", 'utf-8'):
-                self.bMeteo = True
+                self.keywords["bMeteo"] = True
 
-        if self.bHeure and self.bEst or self.bHeure or self.bLHeure:
+        if self.keywords["bHeure"] and self.keywords["bEst"] or self.keywords["bHeure"] or self.keywords["bLHeure"]:
             self.giveHour()
 
-        if self.bDate and self.bEst or self.bDate or self.bJour and self.bSommesNous:
+        if self.keywords["bDate"] and self.keywords["bEst"] or self.keywords["bDate"] or self.keywords["bJour"] and self.keywords["bSommesNous"]:
             self.giveDate()
         
-        if self.bMeteo:
+        if self.keywords["bMeteo"]:
             self.giveMeteo()
 
-        elif self.bAria:
+        if len(self.request) == 1 and self.keywords["bAria"]:
             self.basicAnswer()
 
-        else:
+        # Variable for the no keyword detection
+        anyKeywordsDetected = False
+
+        for keywordDetected in self.keywords.values():
+            anyKeywordsDetected = anyKeywordsDetected or keywordDetected
+
+        if not anyKeywordsDetected:
             self.answer = "Je ne comprends pas"
 
         return self.answer
