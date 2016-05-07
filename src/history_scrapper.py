@@ -33,7 +33,7 @@ class HistoryScrapper:
 
 		# Historic name treatement
 		if len(self.historicName) == 1:
-			historicNameURL = str(historicName.pop())
+			historicNameURL = historicName.pop()
 		else:
 			historicNameURL = historicName.pop()
 
@@ -42,4 +42,12 @@ class HistoryScrapper:
 
 			historicNameURL = preHistoricNameURL + historicNameURL
 
-		print historicNameURL
+		historicNameURL = urllib2.quote(historicNameURL.encode('utf-8'))
+		
+		url = "https://fr.wikipedia.org/wiki/" + historicNameURL
+		httpRequest     = urllib2.Request(url)
+		page            = self.opener.open(httpRequest)
+		rawdata         = page.read()
+		lines_of_data   = rawdata.split('\n')
+
+		print lines_of_data

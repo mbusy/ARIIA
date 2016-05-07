@@ -59,13 +59,7 @@ class MeteoScrapper:
 		"""
 
 		self.city = city
-
-		for letter in self.city:
-			if letter.lower().encode("utf-8") == u"é".encode("utf-8"):
-				self.cityUrl += "%C3%89"
-			else:
-				self.cityUrl += letter
-
+		self.cityUrl = urllib2.quote(self.city.encode('utf-8'))
 
 		url             = "http://www.yr.no/place/France/%C3%8Ele-de-France/" + self.cityUrl + "/"
 		httpRequest     = urllib2.Request(url)
