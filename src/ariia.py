@@ -7,6 +7,7 @@ import time
 import urllib2
 
 import meteo_scrapper as ms
+import history_scrapper as hs
 
 
 class Ariia:
@@ -18,11 +19,12 @@ class Ariia:
         """
         Constructor
         """
-        self.answer        = None
-        self.request       = list()
-        self.cityList      = list()
-        self.meteoScrapper = ms.MeteoScrapper()
-        self.keywords      = dict()
+        self.answer          = None
+        self.request         = list()
+        self.cityList        = list()
+        self.meteoScrapper   = ms.MeteoScrapper()
+        self.historyScrapper = hs.HistoryScrapper()
+        self.keywords        = dict()
 
         self.resetKeywords()
 
@@ -163,6 +165,13 @@ class Ariia:
 
 
     def basicAnswer(self, answerFlag):
+        """
+        Gives a basic answer
+
+        Parameters :
+            answerFlag - The flag given for a specific answer
+        """
+
         if answerFlag == "oui":
             self.answer = "Oui ?"
 
@@ -178,11 +187,20 @@ class Ariia:
         elif answerFlag == "presentationHumain":
             self.answer = u"Je suis presque sûre que tu es un humain !".encode('utf-8')
 
+
     def giveHour(self):
+        """
+        Gives the hour
+        """
         currentTime = time.localtime()
         self.answer += " Il est actuellement " + str(currentTime[3]) + " heure " + str(currentTime[4]) + "."
 
+
     def giveDate(self):
+        """
+        Gives the date
+        """
+
         currentTime = time.localtime()
 
         if currentTime[1] == 1:
@@ -212,7 +230,14 @@ class Ariia:
         
         self.answer += " Nous sommes le " + str(currentTime[2]) + month + str(currentTime[0]) + "."
 
+
     def giveMeteo(self):
+        """
+        Gives meteo data for a specific city
+
+        Note : For now this method is in alpha version, can retreive meteo data from cities in "ile de france"
+        """
+
         for word in self.request:
             if word is not "Aria":
                 for letter in word:
@@ -251,8 +276,29 @@ class Ariia:
                 self.answer += " " + city.encode('utf-8')
                 self.answer += "."
 
-    #def giveHistory(self):
 
+    def giveHistory(self):
+        """
+        Gives historical data
+        """
+
+        historicName = list()
+
+        for word in self.request:
+            if word is not "Aria":
+                for letter in word:
+                    letterUpper = letter.upper()
+                    if letter == letterUpper:
+                        historicName.append(word)
+                    
+                    break
+
+        try:
+            
+            self.historyScrapper.getHistoricDescription(historicName)
+
+        except Exception, e:
+            print e
 
 
 
