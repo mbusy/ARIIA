@@ -26,6 +26,7 @@ class MeteoScrapper:
 		self.cookieJar   = cookielib.CookieJar()
 		self.opener      = urllib2.build_opener(urllib2.HTTPCookieProcessor(self.cookieJar))
 
+
 	def meteoTranslate(self):
 		"""
 		Method used to translate the meteo data retreived from the website
@@ -54,10 +55,12 @@ class MeteoScrapper:
 		Get the different meteo parameters for the given city
 
 		Parameters :
-			city - The city targeted
+			city - The targeted city
 		"""
 
-		for letter in city:
+		self.city = city
+
+		for letter in self.city:
 			if letter.lower().encode("utf-8") == u"é".encode("utf-8"):
 				self.cityUrl += "%C3%89"
 			else:
