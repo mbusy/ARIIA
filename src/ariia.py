@@ -11,10 +11,13 @@ import meteo_scrapper as ms
 
 class Ariia:
     """
-    Used to analyse the user speech
+    Motherclass of the project, the domotic assistant
     """
 
     def __init__(self):
+        """
+        Constructor
+        """
         self.answer        = None
         self.request       = list()
         self.cityList      = list()
@@ -24,6 +27,9 @@ class Ariia:
         self.resetKeywords()
 
     def resetKeywords(self):
+        """
+        Reset the keywords
+        """
 
         # Keaywords Booleans dictionnaire
         self.keywords["Aria"]       = False
@@ -37,6 +43,7 @@ class Ariia:
         self.keywords["es"]         = False
         self.keywords["sommesNous"] = False
         self.keywords["es-tu"]      = False
+        self.keywords["etait"]      = False
         self.keywords["suis-je"]    = False
         self.keywords["tAppelles"]  = False
         self.keywords["sais"]       = False
@@ -53,6 +60,12 @@ class Ariia:
         del self.cityList[:]
 
     def analyseSpeech(self, speech):
+        """
+        Analyse the speech of the user and trigger answering methods
+
+        Parameters :
+            speech - The speech of the user
+        """
 
         self.answer = ""
         self.resetKeywords()
@@ -112,6 +125,9 @@ class Ariia:
             elif word.lower() == "suis-je":
                 self.keywords["suis-je"] = True
 
+            elif word.lower() == unicode("était", 'utf-8'):
+                self.keywords["etait"] = True
+
 
         if self.keywords["heure"] and self.keywords["est"] or self.keywords["heure"] or self.keywords["lHeure"]:
             self.giveHour()
@@ -122,13 +138,16 @@ class Ariia:
         if self.keywords["meteo"]:
             self.giveMeteo()
 
+        if self.keywords["qui"] and self.keywords["etait"]:
+            self.giveHistory()
+
         if self.keywords["comment"] and self.keywords["tAppelles"]:
             self.basicAnswer("aria")
 
         if len(self.request) == 1 and self.keywords["Aria"]:
             self.basicAnswer("oui")
 
-        if self.keywords["sais"] and self.keywords["faire"]:
+        if self.keywords["tu"] and self.keywords["sais"] and self.keywords["faire"]:
             self.basicAnswer("jeSaisFaire")
 
         if self.keywords["qui"] and self.keywords["es-tu"]:
@@ -232,7 +251,8 @@ class Ariia:
                 self.answer += " " + city.encode('utf-8')
                 self.answer += "."
 
-            #TODO : Unicode cities
+    #def giveHistory(self):
+
 
 
 
