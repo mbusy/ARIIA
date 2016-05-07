@@ -3,6 +3,11 @@
 import urllib2
 import cookielib
 
+from bs4 import BeautifulSoup
+import unicodedata2
+
+# import html2text
+
 class HistoryScrapper:
 	"""
 	Class to retreive the historic data from the internet
@@ -48,6 +53,26 @@ class HistoryScrapper:
 		httpRequest     = urllib2.Request(url)
 		page            = self.opener.open(httpRequest)
 		rawdata         = page.read()
-		lines_of_data   = rawdata.split('\n')
+		
+		soup            = BeautifulSoup(rawdata)
 
-		print lines_of_data
+		# kill all script and style elements
+		for script in soup(["script", "style"]):
+			script.extract()    # rip it out
+		
+		# get text
+		text = soup.get_text()
+		
+		# break into lines and remove leading and trailing space on each
+		lines = (line.strip() for line in text.splitlines())
+		# break multi-headlines into a line each
+		chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
+		# drop blank lines
+		text = '\n'.join(chunk for chunk in chunks if chunk)
+		
+		# text = unicodedata2.normalize('NFKD', text).encode('utf-8','ignore')
+		text = text.encode('utf-8', 'ignore')
+		#print text
+
+		# print html2text.html2text(rawdata)
+

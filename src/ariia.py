@@ -293,12 +293,12 @@ class Ariia:
                     
                     break
 
-        try:
+        # try:
             
-            self.historyScrapper.getHistoricDescription(historicName)
+        self.historyScrapper.getHistoricDescription(historicName)
 
-        except Exception, e:
-            print e
+        # except Exception, e:
+        #     print e
 
 
 
