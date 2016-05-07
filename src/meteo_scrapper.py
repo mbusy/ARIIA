@@ -2,7 +2,6 @@
 
 import urllib2
 import cookielib
-from translate import translator
 
 class MeteoScrapper:
 	"""
@@ -17,11 +16,38 @@ class MeteoScrapper:
 		self.city    	 = ""
 		self.cityUrl 	 = ""
 		self.sky         = ""
-		self.temperature = 0.0
+		self.temperature = ""
 		self.wind        = ""
+
+		self.skyData         = list()
+		self.temperatureData = list()
+		self.windData        = list()
 
 		self.cookieJar   = cookielib.CookieJar()
 		self.opener      = urllib2.build_opener(urllib2.HTTPCookieProcessor(self.cookieJar))
+
+	def meteoTranslate(self):
+		"""
+		Method used to translate the meteo data retreived from the website
+		"""
+
+		# Sky translation
+		if 'Clear' in self.skyData and 'sky' in self.skyData:
+			self.sky = u"dégagé".encode('utf-8')
+
+		elif 'Partly' in self.skyData and 'cloudy' in self.skyData:
+			self.sky = "partiellement nuageux"
+
+		# Temperature translation
+		self.temperature = self.temperatureData.pop()
+
+		# Wind translation
+		if 'Gentle' in self.windData and 'breeze' in self.windData:
+			self.wind = "douce brise"
+
+		if 'Light' in self.windData and 'breeze' in self.windData:
+			self.wind = u"légère brise ".encode('utf-8')
+
 
 	def getMeteo(self, city):
 		"""
@@ -47,13 +73,15 @@ class MeteoScrapper:
 		info            = special_lines[0].replace('"','').split('content=')[1]
 		sections        = info.split(':')
 		sectionsRefined = sections[3].split(',')
-                
-		for temperatureData in sectionsRefined[1].split(" "):
-			pass
 
-		self.sky         = translator('en', 'fr', sectionsRefined[0])
-		self.temperature = temperatureData
-		self.wind        = translator('en', 'fr', sectionsRefined[3])
+		self.skyData         = sectionsRefined[0].split(" ")
+		self.temperatureData = sectionsRefined[1].split(" ")
+		self.windData        = sectionsRefined[3].split(" ")
 
-		print self.sky
-		print self.wind
+		self.meteoTranslate()
+
+		# For the debug
+		print '-----METEO-DEBUG------'
+		print self.skyData
+		print self.windData
+		print '----------------------'

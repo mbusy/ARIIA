@@ -210,12 +210,22 @@ class Ariia:
             try:
                 
                 self.meteoScrapper.getMeteo(city)
+                self.answer += u" à ".encode('utf-8') + city.encode('utf-8') + ": "
 
-                self.answer += " Il fait"
-                self.answer += self.meteoScrapper.temperature
-                self.answer += u" degrés à".encode('utf-8')
-                self.answer += " " + city.encode('utf-8')
-                self.answer += "."
+                if self.meteoScrapper.sky is not "":
+                    self.answer += " le ciel est "
+                    self.answer += self.meteoScrapper.sky
+                    self.answer += ", "
+
+                if self.meteoScrapper.temperature is not "":
+                    self.answer += " Il fait"
+                    self.answer += self.meteoScrapper.temperature
+                    self.answer += u" degrés".encode('utf-8')
+                    self.answer += ", "
+
+                if self.meteoScrapper.wind is not "":
+                    self.answer += " Le vent est de type : "
+                    self.answer += self.meteoScrapper.wind
 
             except urllib2.HTTPError:
                 self.answer += u" Je n'ai pas de données météo pour la ville : ".encode('utf-8')
