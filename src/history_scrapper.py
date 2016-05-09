@@ -6,7 +6,6 @@ import cookielib
 from bs4 import BeautifulSoup
 import unicodedata2
 
-# import html2text
 
 class HistoryScrapper:
 	"""
@@ -54,6 +53,9 @@ class HistoryScrapper:
 		page            = self.opener.open(httpRequest)
 		rawdata         = page.read()
 		
+		# Treatement on rawdata
+		
+
 		soup            = BeautifulSoup(rawdata)
 
 		# kill all script and style elements
@@ -71,8 +73,5 @@ class HistoryScrapper:
 		text = '\n'.join(chunk for chunk in chunks if chunk)
 		
 		# text = unicodedata2.normalize('NFKD', text).encode('utf-8','ignore')
-		text = text.encode('utf-8', 'ignore')
-		#print text
-
-		# print html2text.html2text(rawdata)
-
+		text = text.encode('latin1', 'ignore')
+		print text
