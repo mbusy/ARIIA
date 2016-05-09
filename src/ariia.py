@@ -270,6 +270,7 @@ class Ariia:
                 if self.meteoScrapper.wind is not "":
                     self.answer += " Le vent est de type : "
                     self.answer += self.meteoScrapper.wind
+                    self.answer += "."
 
             except urllib2.HTTPError:
                 self.answer += u" Je n'ai pas de données météo pour la ville : ".encode('utf-8')
