@@ -54,7 +54,30 @@ class HistoryScrapper:
 		rawdata         = page.read()
 		
 		# Treatement on rawdata
+		lines_of_data   = rawdata.split('\n')
 		
+		special_lines = list()
+		startIntro = False
+		endIntro   = False
+
+		for line in lines_of_data:
+			if line.find('<p><b>') > -1:
+				startIntro = True
+
+			if startIntro:
+				special_lines.append(line)
+				if line.find('</p>'):
+					endIntro = True
+
+			if endIntro:
+				startIntro = False
+				endIntro   = False
+				break
+
+		# special_lines   = [line for line in lines_of_data if line.find('og:description')>-1]
+		# info            = special_lines[0].replace('"','').split('content=')[1]
+		# sections        = info.split(':')
+		# sectionsRefined = sections[3].split(',')
 
 		soup            = BeautifulSoup(rawdata)
 
@@ -74,4 +97,5 @@ class HistoryScrapper:
 		
 		# text = unicodedata2.normalize('NFKD', text).encode('utf-8','ignore')
 		text = text.encode('latin1', 'ignore')
-		print text
+		
+		print special_lines
