@@ -283,7 +283,8 @@ class Ariia:
         Gives historical data
         """
 
-        historicName = list()
+        historicName    = list()
+        historicNameStr = ""
 
         for word in self.request:
             if word is not "Aria":
@@ -291,15 +292,19 @@ class Ariia:
                     letterUpper = letter.upper()
                     if letter == letterUpper:
                         historicName.append(word)
+                        historicNameStr += word + " "
                     
                     break
 
-        # try:
+        try:
             
-        self.historyScrapper.getHistoricDescription(historicName)
+            self.historyScrapper.getHistoricDescription(historicName)
+            self.answer += self.historyScrapper.historicResume
 
-        # except Exception, e:
-        #     print e
+        except Exception:
+            self.answer += u"Je n'ai pas de données historiques pour le personnage : ".encode('utf-8')
+            self.answer += historicNameStr.encode('utf-8')
+            self.answer += u", ou ces données sont corrompues.".encode('utf-8')
 
 
 

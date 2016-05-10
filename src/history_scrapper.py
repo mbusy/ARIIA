@@ -18,6 +18,7 @@ class HistoryScrapper:
 		"""
 
 		self.historicName = ""
+		self.historicResume = ""
 
 		self.cookieJar   = cookielib.CookieJar()
 		self.opener      = urllib2.build_opener(urllib2.HTTPCookieProcessor(self.cookieJar))
@@ -34,10 +35,11 @@ class HistoryScrapper:
 		self.historicName  = historicName
 		historicNameURL    = ""
 		preHistoricNameURL = ""
+		rawHistoricResume  = ""
 
-		# Historic name treatement
-		if len(self.historicName) == 1:
+		if len(self.historicName) == 1:															# Historic name treatement
 			historicNameURL = historicName.pop()
+		
 		else:
 			historicNameURL = historicName.pop()
 
@@ -48,17 +50,17 @@ class HistoryScrapper:
 
 		historicNameURL = urllib2.quote(historicNameURL.encode('utf-8'))
 		
-		url = "https://fr.wikipedia.org/wiki/" + historicNameURL
+		
+		url             = "https://fr.wikipedia.org/wiki/" + historicNameURL
 		httpRequest     = urllib2.Request(url)
 		page            = self.opener.open(httpRequest)
 		rawdata         = page.read()
 		
-		# Treatement on rawdata
-		lines_of_data   = rawdata.split('\n')
+		lines_of_data   = rawdata.split('\n')													# Treatement on rawdata
 		
-		special_lines = list()
-		startIntro = False
-		endIntro   = False
+		special_lines = list()																	# Keep the resume
+		startIntro    = False
+		endIntro      = False
 
 		for line in lines_of_data:
 			if line.find('<p><b>') > -1:
@@ -74,28 +76,21 @@ class HistoryScrapper:
 				endIntro   = False
 				break
 
-		# special_lines   = [line for line in lines_of_data if line.find('og:description')>-1]
-		# info            = special_lines[0].replace('"','').split('content=')[1]
-		# sections        = info.split(':')
-		# sectionsRefined = sections[3].split(',')
+		
+		for line in special_lines:																# Get the resume
+			rawHistoricResume += line
 
-		soup            = BeautifulSoup(rawdata)
+		soup = BeautifulSoup(rawHistoricResume)
 
-		# kill all script and style elements
-		for script in soup(["script", "style"]):
-			script.extract()    # rip it out
+		for script in soup(["script", "style"]):												# kill all script and style elements
+			script.extract()    																# rip it out
 		
-		# get text
-		text = soup.get_text()
-		
-		# break into lines and remove leading and trailing space on each
-		lines = (line.strip() for line in text.splitlines())
-		# break multi-headlines into a line each
-		chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
-		# drop blank lines
-		text = '\n'.join(chunk for chunk in chunks if chunk)
-		
-		# text = unicodedata2.normalize('NFKD', text).encode('utf-8','ignore')
-		text = text.encode('latin1', 'ignore')
-		
-		print special_lines
+		text                = soup.get_text()													# get text
+		lines               = (line.strip() for line in text.splitlines())						# break into lines and remove leading and trailing space on each
+		chunks              = (phrase.strip() for line in lines for phrase in line.split("  "))	# break multi-headlines into a line each
+		text                = '\n'.join(chunk for chunk in chunks if chunk) 					# drop blank lines
+		text                = text.encode('utf-8', 'ignore')		
+		self.historicResume = text.decode('utf-8')
+		# print text.decode('utf-8')
+
+
