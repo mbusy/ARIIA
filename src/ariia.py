@@ -310,7 +310,7 @@ class Ariia:
 
 
 def playMp3():
-    clip = mp3play.load("test.mp3")
+    clip = mp3play.load("tts.mp3")
     clip.play()
     time.sleep(clip.seconds())
     clip.stop()
@@ -349,7 +349,7 @@ def main():
             answer = s.analyseSpeech(recognized_audio)
 
             tts = gTTS(text=answer, lang="fr")
-            tts.save("test.mp3")
+            tts.save("tts.mp3")
             playMp3()
 
         except sr.UnknownValueError:
