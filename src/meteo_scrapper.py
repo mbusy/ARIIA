@@ -36,6 +36,9 @@ class MeteoScrapper:
 		if 'Clear' in self.skyData and 'sky' in self.skyData:
 			self.sky = u"dégagé".encode('utf-8')
 
+		elif 'Fair' in self.skyData:
+			self.sky = u"relativement dégagé".encode('utf-8')
+
 		elif 'Partly' in self.skyData and 'cloudy' in self.skyData:
 			self.sky = "partiellement nuageux"
 
@@ -53,10 +56,10 @@ class MeteoScrapper:
 			self.wind = "douce brise"
 
 		elif 'Light' in self.windData and 'breeze' in self.windData:
-			self.wind = u"légère brise ".encode('utf-8')
+			self.wind = u"légère brise".encode('utf-8')
 
 		elif 'Moderate' in self.windData and 'breeze' in self.windData:
-			self.wind = u"moyenne brise ".encode('utf-8')		
+			self.wind = u"moyenne brise".encode('utf-8')		
 
 
 	def getMeteo(self, city):
