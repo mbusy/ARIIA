@@ -8,6 +8,7 @@ import urllib2
 
 import meteo_scrapper as ms
 import history_scrapper as hs
+import shopping_list_manager as slm
 
 
 class Ariia:
@@ -112,6 +113,10 @@ class Ariia:
     def playMp3File(self, file="tts.mp3"):
         """
         Play an mp3 file
+        
+        Paramters :
+            file - File where the mp3 data is storred, 
+                   tts.mp3 is the default value.        
         """
 
         try:
@@ -137,6 +142,8 @@ class Ariia:
         self.keywords["heure"]      = False
         self.keywords["meteo"]      = False        
         self.keywords["lHeure"]     = False
+        self.keywords["liste"]      = False
+        self.keywords["courses"]    = False
 
         self.keywords["est"]        = False
         self.keywords["es"]         = False
@@ -153,6 +160,8 @@ class Ariia:
         self.keywords["faire"]      = False
 
         self.keywords["tu"]         = False
+
+        self.keywords["de"]         = False
 
         # Flush keywords kists
         del self.request[:]
@@ -226,6 +235,15 @@ class Ariia:
             elif word.lower() == unicode("était", 'utf-8'):
                 self.keywords["etait"] = True
 
+            elif word.lower() == "liste":
+                self.keywords["liste"] = True
+
+            elif word.lower() == "de":
+                self.keywords["de"] = True
+
+            elif word.lower() == "courses":
+                self.keywords["courses"] = True
+
 
         if self.keywords["heure"] and self.keywords["est"] or self.keywords["heure"] or self.keywords["lHeure"]:
             self.giveHour()
@@ -238,6 +256,9 @@ class Ariia:
 
         if self.keywords["qui"] and self.keywords["etait"]:
             self.giveHistory()
+
+        if self.keywords["liste"] and self.keywords["de"] and self.keywords["courses"]:
+            self.manageShoppingLists()
 
         if self.keywords["comment"] and self.keywords["tAppelles"]:
             self.basicAnswer("aria")
@@ -407,6 +428,39 @@ class Ariia:
             self.answer += historicNameStr.encode('utf-8')
             self.answer += u", ou ces données sont corrompues.".encode('utf-8')
 
+
+
+    def manageShoppingLists(self):
+        """
+        Manage the shopping lists of the user.
+        """
+
+        self.shoppingListManager = slm.ShoppingListManager()
+        self.answer              = self.shoppingListManager.answer
+        
+        self.answerToTTS()
+        self.playMp3File()
+
+        while self.shoppingListManager.loopFlag:
+            self.answer = "Que souhaitez vous faire ?"
+            self.answerToTTS()
+            self.playMp3File()
+
+            print u"- Créer une nouvelle liste".encode('utf-8')
+            print u"- Supprimer une liste".encode('utf-8')
+            print u"- Ajouter un élément à la liste".encode('utf-8')
+            print u"- Supprimer un élément de la liste".encode('utf-8')
+            print u"- Changer de liste".encode('utf-8')
+            print u"- Quitter l'application".encode('utf-8')
+
+            self.listening()
+            self.audioToSpeech()
+            self.shoppingListManager.manageShoppingLists(self.speech)
+            self.answer = self.shoppingListManager.answer
+            self.answerToTTS()
+            self.playMp3File()
+
+        self.answer = "Je ferme mon application de liste de courses."
 
 
 def main():
