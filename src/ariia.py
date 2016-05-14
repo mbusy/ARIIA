@@ -19,6 +19,11 @@ class Ariia:
         """
         Constructor
         """
+        self.recognizer      = sr.Recognizer()
+        self.microphone      = sr.Microphone()
+        self.audio           = None
+        self.speech          = None
+
         self.answer          = None
         self.request         = list()
         self.cityList        = list()
@@ -27,6 +32,98 @@ class Ariia:
         self.keywords        = dict()
 
         self.resetKeywords()
+        self.noiseCalibration()
+
+
+
+    def noiseCalibration(self):
+        """
+        Calibration of the noise for the
+        microphone
+        """
+
+        print ("a moment of silence...")
+        with self.microphone as source : self.recognizer.adjust_for_ambient_noise(source)
+        print("Minimum energy threshold set to {}".format(self.recognizer.energy_threshold))
+
+
+
+    def interaction(self):
+        """
+        Interact with the user, main interface 
+        between Ariia and the user.
+        """
+
+        self.listening()
+        self.audioToSpeech()
+        self.analyseSpeech()
+        self.answerToTTS()
+        self.playMp3File()
+
+
+    def listening(self):
+        """
+        Listen to the user through a micorphone
+        """
+
+        with self.microphone as source:
+            print("Listening !")
+            self.audio = self.recognizer.listen(source)
+
+
+
+    def audioToSpeech(self):
+        """
+        Get the audio signal and transform it to
+        an exploitable speech
+        """
+
+        try:
+            # For testing purposes, we're just using the default API key
+            # To use another API key, use `r.recognize_google(audio, key="GOOGLE_SPEECH_RECOGNITION_API_KEY")`
+            # Instead of `r.recognize_google(audio)`
+            print "computing..."
+            self.speech = self.recognizer.recognize_google(self.audio, language='fr')
+            print "You said " + self.speech
+
+        except sr.UnknownValueError:
+            print "Could not understand audio"
+        except sr.RequestError as e:
+            print "Could not request results from online service; {0}".format(e)
+
+
+
+    def answerToTTS(self):
+        """
+        Convert the answer text to TTS mp3 file
+        """
+
+        try:
+            tts = gTTS(text=self.answer, lang="fr")
+            tts.save("tts.mp3")
+
+        except sr.UnknownValueError:
+            print "Could not understand audio"
+        except sr.RequestError as e:
+            print "Could not request results from online service; {0}".format(e)
+
+
+
+    def playMp3File(self, file="tts.mp3"):
+        """
+        Play an mp3 file
+        """
+
+        try:
+            clip = mp3play.load("tts.mp3")
+            clip.play()
+            time.sleep(clip.seconds())
+            clip.stop()
+
+        except Exception:
+            print "Could not play the mp3 file"
+
+
 
     def resetKeywords(self):
         """
@@ -61,18 +158,17 @@ class Ariia:
         del self.request[:]
         del self.cityList[:]
 
-    def analyseSpeech(self, speech):
+
+
+    def analyseSpeech(self):
         """
         Analyse the speech of the user and trigger answering methods
-
-        Parameters :
-            speech - The speech of the user
         """
 
         self.answer = ""
         self.resetKeywords()
 
-        for word in speech.split(" "):
+        for word in self.speech.split(" "):
             self.request.append(word)
 
         for word in self.request:
@@ -164,6 +260,7 @@ class Ariia:
         return self.answer
 
 
+
     def basicAnswer(self, answerFlag):
         """
         Gives a basic answer
@@ -188,12 +285,14 @@ class Ariia:
             self.answer = u"Je suis presque sûre que tu es un humain !".encode('utf-8')
 
 
+
     def giveHour(self):
         """
         Gives the hour
         """
         currentTime = time.localtime()
         self.answer += " Il est actuellement " + str(currentTime[3]) + " heure " + str(currentTime[4]) + "."
+
 
 
     def giveDate(self):
@@ -229,6 +328,7 @@ class Ariia:
             month = "decembre"
         
         self.answer += " Nous sommes le " + str(currentTime[2]) + month + str(currentTime[0]) + "."
+
 
 
     def giveMeteo(self):
@@ -278,6 +378,7 @@ class Ariia:
                 self.answer += "."
 
 
+
     def giveHistory(self):
         """
         Gives historical data
@@ -308,54 +409,15 @@ class Ariia:
 
 
 
-
-def playMp3():
-    clip = mp3play.load("tts.mp3")
-    clip.play()
-    time.sleep(clip.seconds())
-    clip.stop()
-
-
 def main():
+    """
+    Main method to launch ARIIA
+    """
 
-    # obtain audio from the microphone
-    r = sr.Recognizer()
-    m = sr.Microphone()
-    s = Ariia()
-
-
-    # Calibration of the noise
-    print ("a moment of silence...")
-    with m as source : r.adjust_for_ambient_noise(source)
-    print("Minimum energy threshold set to {}".format(r.energy_threshold))
-
+    ariia = Ariia()
 
     while True:
-
-        with m as source:
-            print("Listening !")
-            audio = r.listen(source)
-            print ("Computing...")
-
-
-        # recognize speech using Google Speech Recognition
-        try:
-            # for testing purposes, we're just using the default API key
-            # to use another API key, use `r.recognize_google(audio, key="GOOGLE_SPEECH_RECOGNITION_API_KEY")`
-            # instead of `r.recognize_google(audio)`
-            recognized_audio = r.recognize_google(audio, language='fr')
-            print("You said " + recognized_audio)
-            
-            answer = s.analyseSpeech(recognized_audio)
-
-            tts = gTTS(text=answer, lang="fr")
-            tts.save("tts.mp3")
-            playMp3()
-
-        except sr.UnknownValueError:
-            print("Could not understand audio")
-        except sr.RequestError as e:
-            print("Could not request results from online service; {0}".format(e))
+        ariia.interaction()
 
 
 if __name__ == "__main__":
