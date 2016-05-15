@@ -8,16 +8,20 @@ class ShoppingListManager:
 	Manage the user shopping list
 	"""
 
-	def __init__(self):
+	def __init__(self, audioDeviceManager):
 		"""
-		Constructor
+		Constructor.
+
+		Parameters :
+			audioDeviceManager - The audio device manager used by the motherclass
 		"""
 
-		self.shoppingLists = dict()
-		self.loopFlag      = True
-		self.answer        = ""
-		self.speech        = ""
-		self.request       = list()
+		self.shoppingLists      = dict()
+		self.loopFlag           = True
+		self.answer             = ""
+		self.speech             = ""
+		self.request            = list()
+		self.audioDeviceManager = audioDeviceManager
 
 		self.loadShoppingLists()
 
@@ -40,6 +44,9 @@ class ShoppingListManager:
 
 		except Exception:
 			self.answer = "Il n'y a pas de listes de courses pour le moment"
+
+		finally:
+			self.audioDeviceManager.speakAnswer(self.answer)
 	
 
 
@@ -52,36 +59,42 @@ class ShoppingListManager:
 				   shopping_lists is the default value.
 		"""
 
-		try:
-			dill.dump(self.shoppingLists, open(file, "w"))
-			self.answer = u"Votre liste a été correctement enregistrée.".encode('utf-8')
+		if len(self.shoppingLists) is not 0:
+			try:
+				dill.dump(self.shoppingLists, open(file, "w"))
+				self.answer = u"Votre liste a été correctement enregistrée.".encode('utf-8')
 
-		except Exception:
-			self.answer = "Il y a une erreur dans la sauvegarde."
+			except Exception:
+				self.answer = "Il y a une erreur dans la sauvegarde."
+
+		else:
+			self.answer = u"Je n'ai pas de listes à enregistrer.".encode('utf-8')
+
+		self.audioDeviceManager.speakAnswer(self.answer)
 
 
 
-	def manageShoppingLists(self, speech):
+	def manageShoppingLists(self):
 		"""
 		Manage the user's speech and the shopping lists.
-
-		Parameters :
-			speech - The speech of the user.
 		"""
 
-		del self.request[:]
-		self.speech = speech
+		# self.audioDeviceManager.speakAnswer(u"Pour quitter l'application, dites j'ai fini.".encode('utf-8'))
+		# self.audioDeviceManager.speakAnswer(u"Vous pouvez ajouter une liste de courses en disant ajouter liste de courses. Vous pouvez en supprimer une en disant supprimer une liste de courses. Vous pouvez changer de liste en disant changer de liste. Vous pouvez également ajouter ou retirer un élément d'une liste de courses".encode('utf-8'))
 
-		for word in self.speech.split(" "):
-			self.request.append(word)
+		while self.loopFlag:
 
-		if unicode("Créer", 'utf-8') in self.request and "nouvelle" in self.request and "liste" in self.request:
-			self.createNewShoppingList() 
+			del self.request[:]
+			self.speech = self.audioDeviceManager.listenAndCreateSpeech()
 
-		elif "Quitter" in self.request and "l'application" in self.request:
-			self.loopFlag = False
-			
-			if len(self.shoppingLists) is not 0:
+			for word in self.speech.split(" "):
+				self.request.append(word)
+
+			if unicode("Créer", 'utf-8') in self.request and "nouvelle" in self.request and "liste" in self.request:
+				self.createNewShoppingList() 
+
+			elif "j'ai" in self.request and "fini" in self.request:
+				self.loopFlag = False
 				self.saveShoppingLists()
 
 
