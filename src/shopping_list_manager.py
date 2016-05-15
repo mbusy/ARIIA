@@ -100,7 +100,7 @@ class ShoppingListManager:
 
 
 			for word in self.speech.split(" "):
-				self.request.append(word)
+				self.request.append(word.lower())
 
 			if unicode("créer", 'utf-8') in self.request and "nouvelle" in self.request and "liste" in self.request or unicode("créer", 'utf-8') in self.request and "liste" in self.request and "courses" in self.request:
 				self.createNewShoppingList()
