@@ -17,6 +17,7 @@ class ShoppingListManager:
 		"""
 
 		self.shoppingLists      = dict()
+		self.currentDict        = None
 		self.loopFlag           = True
 		self.answer             = ""
 		self.speech             = ""
@@ -39,11 +40,12 @@ class ShoppingListManager:
 		try:
 			self.shoppingLists = dill.load(open(file))
 			self.answer        = u"Je détecte ".encode('utf-8')
-			self.answer		  += len(self.shoppingLists)
+			self.answer		  += str(len(self.shoppingLists))
 			self.answer       += " listes de courses."
 
-		except Exception:
+		except Exception, e:
 			self.answer = "Il n'y a pas de listes de courses pour le moment"
+
 
 		finally:
 			self.audioDeviceManager.speakAnswer(self.answer)
@@ -84,21 +86,59 @@ class ShoppingListManager:
 
 		while self.loopFlag:
 
+			print self.shoppingLists
+
 			del self.request[:]
 			self.speech = self.audioDeviceManager.listenAndCreateSpeech()
+
+
+			try:
+				assert self.speech is not None
+
+			except AssertionError:
+				self.speech = "ndSpeechText"
+
 
 			for word in self.speech.split(" "):
 				self.request.append(word)
 
-			if unicode("Créer", 'utf-8') in self.request and "nouvelle" in self.request and "liste" in self.request:
-				self.createNewShoppingList() 
+			if unicode("créer", 'utf-8') in self.request and "nouvelle" in self.request and "liste" in self.request or unicode("créer", 'utf-8') in self.request and "liste" in self.request and "courses" in self.request:
+				self.createNewShoppingList()
+
+			elif unicode("supprimer", 'utf-8') and "liste" in self.request:
+				self.deleteShoppingList()
 
 			elif "j'ai" in self.request and "fini" in self.request:
 				self.loopFlag = False
 				self.saveShoppingLists()
 
 
+
 	def createNewShoppingList(self):
 		"""
 		Creates a new shopping list
 		"""
+
+		self.audioDeviceManager.speakAnswer("Donnez moi le nom de votre nouvelle liste : ")
+		newListName = self.audioDeviceManager.listenAndCreateSpeech().lower()
+
+		self.shoppingLists[newListName] = dict()
+
+
+
+	def deleteShoppingList(self):
+		"""
+		Deletes an existing shopping list
+		"""
+
+		self.audioDeviceManager.speakAnswer(u"Donnez moi le nom de la liste à supprimer : ".encode('utf-8'))
+		deleteListName = self.audioDeviceManager.listenAndCreateSpeech().lower()
+
+		if deleteListName in self.shoppingLists.keys():
+			del self.shoppingLists[deleteListName.encode('utf-8')]
+			self.answer = u"La liste ".encode('utf-8') + deleteListName.encode('utf-8') + u" a été suprimée.".encode('utf-8')
+
+		else:
+			self.answer = u"La liste ".encode('utf-8') + deleteListName.encode('utf-8') + u" n'existe pas.".encode('utf-8')
+
+		self.audioDeviceManager.speakAnswer(self.answer)

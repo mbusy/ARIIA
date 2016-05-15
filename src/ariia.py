@@ -92,6 +92,14 @@ class Ariia:
         self.answer = ""
         self.resetKeywords()
 
+
+        try:
+            assert self.speech is not None
+
+        except AssertionError:
+            self.speech = "nsSpeechText"
+
+
         for word in self.speech.split(" "):
             self.request.append(word)
 
@@ -362,9 +370,12 @@ def main():
 
     ariia = Ariia()
 
-    while True:
-        ariia.interaction()
+    try:
+        while True:
+            ariia.interaction()
 
+    except KeyboardInterrupt:
+        print "exiting..."
 
 if __name__ == "__main__":
     main()
