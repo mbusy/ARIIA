@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import speech_recognition as sr
-from gtts import gTTS
-import mp3play
 import time
 import urllib2
 
+import audio_device_manager as adm
 import meteo_scrapper as ms
 import history_scrapper as hs
 import shopping_list_manager as slm
@@ -20,33 +18,19 @@ class Ariia:
         """
         Constructor
         """
-        self.recognizer      = sr.Recognizer()
-        self.microphone      = sr.Microphone()
-        self.audio           = None
-        self.speech          = None
+        
+        self.audioDeviceManager = adm.AudioDeviceManager()
+        self.audio              = None
+        self.speech             = None
 
-        self.answer          = None
-        self.request         = list()
-        self.cityList        = list()
-        self.meteoScrapper   = ms.MeteoScrapper()
-        self.historyScrapper = hs.HistoryScrapper()
-        self.keywords        = dict()
+        self.answer             = None
+        self.request            = list()
+        self.cityList           = list()
+        self.meteoScrapper      = ms.MeteoScrapper()
+        self.historyScrapper    = hs.HistoryScrapper()
+        self.keywords           = dict()
 
         self.resetKeywords()
-        self.noiseCalibration()
-
-
-
-    def noiseCalibration(self):
-        """
-        Calibration of the noise for the
-        microphone
-        """
-
-        print ("a moment of silence...")
-        with self.microphone as source : self.recognizer.adjust_for_ambient_noise(source)
-        print("Minimum energy threshold set to {}".format(self.recognizer.energy_threshold))
-
 
 
     def interaction(self):
@@ -55,78 +39,9 @@ class Ariia:
         between Ariia and the user.
         """
 
-        self.listening()
-        self.audioToSpeech()
+        self.speech = self.audioDeviceManager.listenAndCreateSpeech()
         self.analyseSpeech()
-        self.answerToTTS()
-        self.playMp3File()
-
-
-    def listening(self):
-        """
-        Listen to the user through a micorphone
-        """
-
-        with self.microphone as source:
-            print("Listening !")
-            self.audio = self.recognizer.listen(source)
-
-
-
-    def audioToSpeech(self):
-        """
-        Get the audio signal and transform it to
-        an exploitable speech
-        """
-
-        try:
-            # For testing purposes, we're just using the default API key
-            # To use another API key, use `r.recognize_google(audio, key="GOOGLE_SPEECH_RECOGNITION_API_KEY")`
-            # Instead of `r.recognize_google(audio)`
-            print "computing..."
-            self.speech = self.recognizer.recognize_google(self.audio, language='fr')
-            print "You said " + self.speech
-
-        except sr.UnknownValueError:
-            print "Could not understand audio"
-        except sr.RequestError as e:
-            print "Could not request results from online service; {0}".format(e)
-
-
-
-    def answerToTTS(self):
-        """
-        Convert the answer text to TTS mp3 file
-        """
-
-        try:
-            tts = gTTS(text=self.answer, lang="fr")
-            tts.save("tts.mp3")
-
-        except sr.UnknownValueError:
-            print "Could not understand audio"
-        except sr.RequestError as e:
-            print "Could not request results from online service; {0}".format(e)
-
-
-
-    def playMp3File(self, file="tts.mp3"):
-        """
-        Play an mp3 file
-        
-        Paramters :
-            file - File where the mp3 data is storred, 
-                   tts.mp3 is the default value.        
-        """
-
-        try:
-            clip = mp3play.load("tts.mp3")
-            clip.play()
-            time.sleep(clip.seconds())
-            clip.stop()
-
-        except Exception:
-            print "Could not play the mp3 file"
+        self.audioDeviceManager.speakAnswer(self.answer)
 
 
 
@@ -435,31 +350,8 @@ class Ariia:
         Manage the shopping lists of the user.
         """
 
-        self.shoppingListManager = slm.ShoppingListManager()
-        self.answer              = self.shoppingListManager.answer
-        
-        self.answerToTTS()
-        self.playMp3File()
-
-        while self.shoppingListManager.loopFlag:
-            self.answer = "Que souhaitez vous faire ?"
-            self.answerToTTS()
-            self.playMp3File()
-
-            print u"- Créer une nouvelle liste".encode('utf-8')
-            print u"- Supprimer une liste".encode('utf-8')
-            print u"- Ajouter un élément à la liste".encode('utf-8')
-            print u"- Supprimer un élément de la liste".encode('utf-8')
-            print u"- Changer de liste".encode('utf-8')
-            print u"- Quitter l'application".encode('utf-8')
-
-            self.listening()
-            self.audioToSpeech()
-            self.shoppingListManager.manageShoppingLists(self.speech)
-            self.answer = self.shoppingListManager.answer
-            self.answerToTTS()
-            self.playMp3File()
-
+        self.shoppingListManager = slm.ShoppingListManager(self.audioDeviceManager)
+        self.shoppingListManager.manageShoppingLists()    
         self.answer = "Je ferme mon application de liste de courses."
 
 
