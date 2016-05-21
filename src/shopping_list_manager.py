@@ -41,7 +41,7 @@ class ShoppingListManager:
 			self.shoppingLists = dill.load(open(file))
 			self.answer        = u"Je détecte ".encode('utf-8')
 			self.answer		  += str(len(self.shoppingLists))
-			self.answer       += " listes de courses."
+			self.answer       += " nom de listes de courses."
 
 		except Exception, e:
 			self.answer = "Il n'y a pas de listes de courses pour le moment"
@@ -102,8 +102,11 @@ class ShoppingListManager:
 			for word in self.speech.split(" "):
 				self.request.append(word.lower())
 
-			if unicode("créer", 'utf-8') in self.request and "nouvelle" in self.request and "liste" in self.request or unicode("créer", 'utf-8') in self.request and "liste" in self.request and "courses" in self.request:
+			if unicode("créer", 'utf-8') in self.request and "nouvelle" in self.request and "liste" in self.request or unicode("créer", 'utf-8') in self.request and "liste" in self.request:
 				self.createNewShoppingList()
+
+			elif unicode("éditer", 'utf-8') in self.request and "liste" in self.request or "modifier" in self.request and "liste" in self.request:
+				self.editShoppingList()
 
 			elif unicode("supprimer", 'utf-8') and "liste" in self.request:
 				self.deleteShoppingList()
@@ -142,3 +145,39 @@ class ShoppingListManager:
 			self.answer = u"La liste ".encode('utf-8') + deleteListName.encode('utf-8') + u" n'existe pas.".encode('utf-8')
 
 		self.audioDeviceManager.speakAnswer(self.answer)
+	
+
+
+	def editShoppingList(self):
+		"""
+		Allows the user to edit an active shopping list
+		"""
+
+		bKeepEditingList = True
+		speechEdit       = ""
+		requestEdit      = list()
+
+		self.audioDeviceManager.speakAnswer(u"Quelle liste voulez vous éditer ?".encode('utf-8'))
+		activeListName = self.audioDeviceManager.listenAndCreateSpeech().lower()
+
+		if activeListName not in self.shoppingLists.keys():
+			self.audioDeviceManager.speakAnswer(u"Cette liste n'existe pas.".encode('utf-8'))
+			return
+
+		self.audioDeviceManager.speakAnswer(u"OK, on modifie la liste ".encode('utf-8') + activeListName)
+
+		while bKeepEditingList:
+			speechEdit = self.audioDeviceManager.listenAndCreateSpeech()
+
+			for word in speechEdit.split(" "):
+				requestEdit.append(word.lower())
+
+			if "c'est" in requestEdit and "bon" in requestEdit or "j'ai" in requestEdit and "fini" in requestEdit:
+				self.audioDeviceManager.speakAnswer(u"Très bien.".encode('utf-8'))
+				return
+
+			elif "ajouter" in requestEdit:
+				return
+
+			elif "supprimer" in requestEdit:
+				return
