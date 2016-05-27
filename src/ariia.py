@@ -3,10 +3,72 @@
 import time
 import urllib2
 
+from threading import Thread
+ 
 import audio_device_manager as adm
 import meteo_scrapper as ms
 import history_scrapper as hs
 import shopping_list_manager as slm
+
+
+
+class KeyEventListener(Thread):
+    """
+    Class listening to the key events
+    """
+
+
+    def __init__(self):
+        """
+        Constructor
+        """
+
+        Thread.__init__(self)
+        self.checkLoop = True
+        self.keyEvent  = False
+
+        self.start()
+
+
+
+    def unregisterListener(self):
+        """
+        Stops the checkloop
+        """
+
+        self.join()
+
+
+    def waitKeyEvent(self):
+        """
+        Freeze the program until enter is pressed,
+        this method has to be used in a loop
+        """
+
+        while not self.keyEvent:
+            pass
+
+        self.keyEvent = False
+
+
+
+    def run(self):
+        """
+        The key event checkloop
+        """
+
+        while self.checkLoop:
+            
+            try:
+                raw_input()
+
+            except EOFError:
+                self.checkLoop = False
+
+            self.keyEvent = True
+
+
+
 
 
 class Ariia:
@@ -14,12 +76,14 @@ class Ariia:
     Motherclass of the project, the domotic assistant
     """
 
+
     def __init__(self):
         """
         Constructor
         """
         
         self.audioDeviceManager = adm.AudioDeviceManager()
+        self.keyEventListener   = KeyEventListener()
         self.audio              = None
         self.speech             = None
 
@@ -33,12 +97,24 @@ class Ariia:
         self.resetKeywords()
 
 
+
+    def cleanStop(self):
+        """
+        Used to correctly stop all the active tasks 
+        """
+
+        self.keyEventListener.unregisterListener()
+
+
+
     def interaction(self):
         """
         Interact with the user, main interface 
         between Ariia and the user.
         """
 
+        self.keyEventListener.waitKeyEvent()
+        
         self.speech = self.audioDeviceManager.listenAndCreateSpeech()
         self.analyseSpeech()
         self.audioDeviceManager.speakAnswer(self.answer)
@@ -312,7 +388,7 @@ class Ariia:
                     self.answer += ", "
 
                 if self.meteoScrapper.wind is not "":
-                    self.answer += " Il y a : "
+                    self.answer += " Il y a "
                     self.answer += self.meteoScrapper.wind
                     self.answer += "."
 
@@ -376,6 +452,7 @@ def main():
 
     except KeyboardInterrupt:
         print "exiting..."
+        ariia.cleanStop()
 
 if __name__ == "__main__":
     main()
