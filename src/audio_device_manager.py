@@ -20,6 +20,7 @@ class AudioDeviceManager:
 		self.microphone = sr.Microphone()
 		self.audio      = None
 		self.speech     = None
+		self.minThresh  = 250
 
 		self.noiseCalibration()
 
@@ -33,6 +34,10 @@ class AudioDeviceManager:
 		
 		print ("a moment of silence...")
 		with self.microphone as source : self.recognizer.adjust_for_ambient_noise(source)
+		
+		if self.recognizer.energy_threshold < self.minThresh:
+			self.recognizer.energy_threshold = self.minThresh
+
 		print("Minimum energy threshold set to {}".format(self.recognizer.energy_threshold))
 
 
