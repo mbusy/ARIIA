@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import speech_recognition as sr
 from gtts import gTTS
 import mp3play
@@ -48,6 +50,7 @@ class AudioDeviceManager:
 		"""
 
 		with self.microphone as source:
+			print "------------"
 			print "listening"
 			self.audio = self.recognizer.listen(source)
 

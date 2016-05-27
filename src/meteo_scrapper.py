@@ -42,11 +42,15 @@ class MeteoScrapper:
 		elif 'Partly' in self.skyData and 'cloudy' in self.skyData:
 			self.sky = "partiellement nuageux"
 
+		elif 'Rain' in self.skyData and 'showers' in self.skyData:
+			self.sky = u"extrêmement pluvieux".encode('utf-8')
+
 		elif 'Rain' in self.skyData:
 			self.sky = "pluvieux"
 
 		elif 'Heavy' in self.skyData and 'rain' in self.skyData:
 			self.sky = u"très pluvieux".encode('utf-8')
+
 
 		# Temperature translation
 		self.temperature = self.temperatureData.pop()
