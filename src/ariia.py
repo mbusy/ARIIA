@@ -312,7 +312,7 @@ class Ariia:
                     self.answer += ", "
 
                 if self.meteoScrapper.wind is not "":
-                    self.answer += " Le vent est de type : "
+                    self.answer += " Il y a : "
                     self.answer += self.meteoScrapper.wind
                     self.answer += "."
 
