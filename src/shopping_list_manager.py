@@ -182,6 +182,8 @@ class ShoppingListManager:
 			elif "supprimer" in requestEdit or "supprime" in requestEdit or unicode("enlève", 'utf-8') in requestEdit:
 				return
 
+			del requestEdit[:]
+
 
 
 	def addElements(self, requestEdit, activeListName):
@@ -193,21 +195,25 @@ class ShoppingListManager:
 			activeList  - The active list name
 		"""
 
-		banishedWords = ['ajouter','ajoute','rajoute','du','la','les','le','des','une','un','et', 'de']
+		banishedWords = ['ajouter','ajoute','rajoute','du','la','les','le','des','une','un','et', 'de', 'aussi']
 		newElements = list()
 
 		for element in requestEdit:
 			if element not in banishedWords:
-				newElements.append(element)
+				newElements.append(element.encode('utf-8'))
 
 		if len(newElements) == 0:
 			self.audioDeviceManager.speakAnswer("Je n'ajoute rien à la liste.")
 			return
 
-		self.answer = u"J'ajoute les elements : ".encode('utf-8')
+		if len(newElements) == 1:
+			self.answer = u"J'ajoute l'éléments : ".encode('utf-8')
+
+		else:
+			self.answer = u"J'ajoute les éléments : ".encode('utf-8')
 
 		for element in newElements:
-			self.answer += element.encode('utf-8') + ', '
+			self.answer += element + ', '
 
 		self.answer += u" à la liste de courses ".encode('utf-8') + activeListName.encode('utf-8')
 		self.audioDeviceManager.speakAnswer(self.answer)
