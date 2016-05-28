@@ -102,7 +102,7 @@ class ShoppingListManager:
 			for word in self.speech.split(" "):
 				self.request.append(word.lower())
 
-			if unicode("créer", 'utf-8') in self.request and "nouvelle" in self.request and "liste" in self.request or unicode("créer", 'utf-8') in self.request and "liste" in self.request:
+			if "ajouter" in self.request and "liste" in self.request or unicode("créer", 'utf-8') in self.request and "liste" in self.request or "nouvelle" in self.request and "liste" in self.request:
 				self.createNewShoppingList()
 
 			elif unicode("éditer", 'utf-8') in self.request and "liste" in self.request or "modifier" in self.request and "liste" in self.request:
@@ -125,7 +125,7 @@ class ShoppingListManager:
 		self.audioDeviceManager.speakAnswer("Donnez moi le nom de votre nouvelle liste : ")
 		newListName = self.audioDeviceManager.listenAndCreateSpeech().lower()
 
-		self.shoppingLists[newListName] = dict()
+		self.shoppingLists[newListName] = list()
 
 
 
@@ -176,8 +176,44 @@ class ShoppingListManager:
 				self.audioDeviceManager.speakAnswer(u"Très bien.".encode('utf-8'))
 				return
 
-			elif "ajouter" in requestEdit:
+			elif "ajouter" in requestEdit or "ajoute" in requestEdit or "rajoute" in requestEdit:
+				self.addElements(requestEdit, activeListName)
+
+			elif "supprimer" in requestEdit or "supprime" in requestEdit or unicode("enlève", 'utf-8') in requestEdit:
 				return
 
-			elif "supprimer" in requestEdit:
-				return
+
+
+	def addElements(self, requestEdit, activeListName):
+		"""
+		Add an element to an existing list
+
+		Parameters :
+			requestEdit - The user's request
+			activeList  - The active list name
+		"""
+
+		banishedWords = ['ajouter','ajoute','rajoute','du','la','les','le','des','une','un','et', 'de']
+		newElements = list()
+
+		for element in requestEdit:
+			if element not in banishedWords:
+				newElements.append(element)
+
+		if len(newElements) == 0:
+			self.audioDeviceManager.speakAnswer("Je n'ajoute rien à la liste.")
+			return
+
+		self.answer = u"J'ajoute les elements : ".encode('utf-8')
+
+		for element in newElements:
+			self.answer += element.encode('utf-8') + ', '
+
+		self.answer += u" à la liste de courses ".encode('utf-8') + activeListName.encode('utf-8')
+		self.audioDeviceManager.speakAnswer(self.answer)
+
+		self.shoppingLists[activeListName].extend(newElements)
+		return
+
+
+
