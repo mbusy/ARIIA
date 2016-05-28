@@ -26,7 +26,7 @@ class AudioDeviceManager:
 		self.microphone 	  = sr.Microphone()
 		self.audio      	  = None
 		self.speech     	  = None
-		self.minThresh  	  = 250
+		self.minThresh  	  = 350
 
 		self.noiseCalibration()
 
