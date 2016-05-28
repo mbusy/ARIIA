@@ -2,73 +2,12 @@
 
 import time
 import urllib2
-
-from threading import Thread
  
 import audio_device_manager as adm
+import key_event_listener as kel
 import meteo_scrapper as ms
 import history_scrapper as hs
 import shopping_list_manager as slm
-
-
-
-class KeyEventListener(Thread):
-    """
-    Class listening to the key events
-    """
-
-
-    def __init__(self):
-        """
-        Constructor
-        """
-
-        Thread.__init__(self)
-        self.checkLoop = True
-        self.keyEvent  = False
-
-        self.start()
-
-
-
-    def unregisterListener(self):
-        """
-        Stops the checkloop
-        """
-
-        self.join()
-
-
-    def waitKeyEvent(self):
-        """
-        Freeze the program until enter is pressed,
-        this method has to be used in a loop
-        """
-
-        while not self.keyEvent:
-            pass
-
-        self.keyEvent = False
-
-
-
-    def run(self):
-        """
-        The key event checkloop
-        """
-
-        while self.checkLoop:
-            
-            try:
-                raw_input()
-
-            except EOFError:
-                self.checkLoop = False
-
-            self.keyEvent = True
-
-
-
 
 
 class Ariia:
@@ -83,7 +22,7 @@ class Ariia:
         """
         
         self.audioDeviceManager = adm.AudioDeviceManager()
-        self.keyEventListener   = KeyEventListener()
+        self.keyEventListener   = kel.KeyEventListener()
         self.audio              = None
         self.speech             = None
 
