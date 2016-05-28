@@ -13,16 +13,20 @@ class AudioDeviceManager:
 	The class also have the option to play the mp3 files.
 	"""
 
-	def __init__(self):
+	def __init__(self, keyEventListener=None):
 		"""
 		Constructor
+
+		Parameters :
+			keyEventListener - A listener for the key events, None if not specified
 		"""
 
-		self.recognizer = sr.Recognizer()
-		self.microphone = sr.Microphone()
-		self.audio      = None
-		self.speech     = None
-		self.minThresh  = 250
+		self.keyEventListener = keyEventListener
+		self.recognizer 	  = sr.Recognizer()
+		self.microphone 	  = sr.Microphone()
+		self.audio      	  = None
+		self.speech     	  = None
+		self.minThresh  	  = 250
 
 		self.noiseCalibration()
 
@@ -48,6 +52,9 @@ class AudioDeviceManager:
 		"""
 		Get an audio signal and convert it to an exploitable speech
 		"""
+
+		if self.keyEventListener is not None:
+			self.keyEventListener.waitKeyEvent()
 
 		with self.microphone as source:
 			print "------------"

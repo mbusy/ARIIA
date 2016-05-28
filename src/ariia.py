@@ -21,8 +21,8 @@ class Ariia:
         Constructor
         """
         
-        self.audioDeviceManager = adm.AudioDeviceManager()
         self.keyEventListener   = kel.KeyEventListener()
+        self.audioDeviceManager = adm.AudioDeviceManager(self.keyEventListener)
         self.audio              = None
         self.speech             = None
 
@@ -51,8 +51,6 @@ class Ariia:
         Interact with the user, main interface 
         between Ariia and the user.
         """
-
-        self.keyEventListener.waitKeyEvent()
         
         self.speech = self.audioDeviceManager.listenAndCreateSpeech()
         self.analyseSpeech()
