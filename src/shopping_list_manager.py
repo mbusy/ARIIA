@@ -179,8 +179,8 @@ class ShoppingListManager:
 			elif "ajouter" in requestEdit or "ajoute" in requestEdit or "rajoute" in requestEdit:
 				self.addElements(requestEdit, activeListName)
 
-			elif "supprimer" in requestEdit or "supprime" in requestEdit or unicode("enlève", 'utf-8') in requestEdit:
-				return
+			elif "supprimer" in requestEdit or "supprime" in requestEdit or unicode("enlève", 'utf-8') in requestEdit or unicode("enlèver", 'utf-8') in requestEdit:
+				self.removeElements(requestEdit, activeListName)
 
 			del requestEdit[:]
 
@@ -207,7 +207,7 @@ class ShoppingListManager:
 			return
 
 		if len(newElements) == 1:
-			self.answer = u"J'ajoute l'éléments : ".encode('utf-8')
+			self.answer = u"J'ajoute l'élément : ".encode('utf-8')
 
 		else:
 			self.answer = u"J'ajoute les éléments : ".encode('utf-8')
@@ -221,5 +221,44 @@ class ShoppingListManager:
 		self.shoppingLists[activeListName].extend(newElements)
 		return
 
+
+	def removeElements(self, requestEdit, activeListName):
+		"""
+		Remove an element from an existing list
+		
+		Parameters :
+			requestEdit - The user's request
+			activeList  - The active list name
+		"""
+		
+		banishedWords = [u"enlève".encode('utf-8'),u"enlèver".encode('utf-8'),'supprimer','supprime','du','la','les','le','des','une','un','et', 'de', 'aussi']
+		garbageElements = list()
+
+		for element in requestEdit:
+			if element not in banishedWords:
+				if element in self.shoppingLists[activeListName]:
+					garbageElements.append(element.encode('utf-8'))
+
+		if len(garbageElements) == 0:
+			self.audioDeviceManager.speakAnswer(u"Je n'enlève rien à la liste.".encode('utf-8'))
+			return
+
+		if len(garbageElements) == 1:
+			self.answer = u"Je supprime l'élément : ".encode('utf-8')
+
+		else:
+			self.answer = u"Je supprime les éléments : ".encode('utf-8')
+
+		for element in garbageElements:
+			self.answer += element + ', '
+
+		self.answer += u" à la liste de courses ".encode('utf-8') + activeListName.encode('utf-8')
+		self.audioDeviceManager.speakAnswer(self.answer)
+
+		for item in garbageElements:
+			self.shoppingLists[activeListName].remove(item)
+
+		return
+			
 
 
