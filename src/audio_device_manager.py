@@ -48,31 +48,50 @@ class AudioDeviceManager:
 
 
 
-	def listenAndCreateSpeech(self):
+	def callback(self, recognizer, audio):
 		"""
-		Get an audio signal and convert it to an exploitable speech
+		Callback method allowing to stop the recording
+
+		Parameters :
+			recognizer - The recognizer (not used here, we use self.recognizer)
+			audio - The audio (not used here, we use self.audio)
 		"""
-
-		if self.keyEventListener is not None:
-			self.keyEventListener.waitKeyEvent()
-
-		with self.microphone as source:
-			print "------------"
-			print "listening"
-			self.audio = self.recognizer.listen(source)
 
 		try:
-			print "computing"
-			self.speech = self.recognizer.recognize_google(self.audio, language='fr')
-			print "You said : " + self.speech
-
-			return self.speech
+			self.speech += recognizer.recognize_google(audio, language='fr') + " "
 
 		except sr.UnknownValueError:
 			print "Could not understand audio"
 
 		except sr.RequestError as e:
-			print "Could not request results from onlin services : " + str(e)
+			print "Could not request results from online services : " + str(e)
+
+
+
+	def listenAndCreateSpeech(self):
+		"""
+		Get an audio signal and convert it to an exploitable speech
+		"""
+
+		self.speech = ""
+
+		if self.keyEventListener is not None:
+			self.keyEventListener.waitKeyEvent()
+
+		print "------------"
+		print "listening"
+
+		stopListening = self.recognizer.listen_in_background(self.microphone, self.callback)
+
+		if self.keyEventListener is not None:
+			self.keyEventListener.waitKeyEvent()
+		
+		print "------------"
+		print "computing"
+		stopListening()
+
+		print "You said : " + self.speech
+		return self.speech
 
 
 
