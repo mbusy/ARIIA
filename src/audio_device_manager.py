@@ -74,7 +74,7 @@ class AudioDeviceManager:
 		except sr.RequestError as e:
 			print "Could not request results from online services : " + str(e)
 
-		print "You >> " + self.speech
+		print ">>   You : " + self.speech
 		return self.speech
 
 
@@ -93,7 +93,7 @@ class AudioDeviceManager:
 			tts = gTTS(text=answer, lang='fr')
 			tts.save("../ressources/tts.mp3")
 
-			print "Ariia >> " + answer
+			print unicode(">> Ariia : {}".format(answer), 'utf-8')
 			self.playMp3File()
 
 		except sr.UnknownValueError:

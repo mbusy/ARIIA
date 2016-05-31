@@ -5,6 +5,7 @@ import urllib2
  
 import audio_device_manager as adm
 import key_event_listener as kel
+import talk_manager as tm
 import meteo_scrapper as ms
 import history_scrapper as hs
 import shopping_list_manager as slm
@@ -23,6 +24,7 @@ class Ariia:
         
         self.keyEventListener   = kel.KeyEventListener()
         self.audioDeviceManager = adm.AudioDeviceManager(self.keyEventListener)
+        self.talkManager        = tm.TalkManager()
         self.audio              = None
         self.speech             = None
 
@@ -196,23 +198,23 @@ class Ariia:
         if self.keywords["liste"] and self.keywords["de"] and self.keywords["courses"]:
             self.manageShoppingLists()
 
-        if self.keywords["comment"] and self.keywords["tAppelles"]:
-            self.basicAnswer("aria")
+        # if self.keywords["comment"] and self.keywords["tAppelles"]:
+        #     self.basicAnswer("aria")
 
-        if len(self.request) == 1 and self.keywords["Aria"]:
-            self.basicAnswer("oui")
+        # if len(self.request) == 1 and self.keywords["Aria"]:
+        #     self.basicAnswer("oui")
 
-        if self.keywords["tu"] and self.keywords["sais"] and self.keywords["faire"]:
-            self.basicAnswer("jeSaisFaire")
+        # if self.keywords["tu"] and self.keywords["sais"] and self.keywords["faire"]:
+        #     self.basicAnswer("jeSaisFaire")
 
-        if self.keywords["qui"] and self.keywords["es-tu"]:
-            self.basicAnswer("presentationAria")
+        # if self.keywords["qui"] and self.keywords["es-tu"]:
+        #     self.basicAnswer("presentationAria")
 
-        if self.keywords["qui"] and self.keywords["suis-je"]:
-            self.basicAnswer("presentationHumain")
+        # if self.keywords["qui"] and self.keywords["suis-je"]:
+        #     self.basicAnswer("presentationHumain")
 
         if self.answer == "":
-            self.answer = "Je ne comprend pas."
+            self.answer = self.talkManager.getTalk(self.speech)
 
         return self.answer
 
