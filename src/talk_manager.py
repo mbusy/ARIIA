@@ -32,6 +32,11 @@ class TalkManager:
 			"Ariia",
 		])
 
+		self.ariiaTalker.train([
+			"qui est ton Créateur",
+			"un programmeur du dimanche.",
+		])
+
 	def getTalk(self, dialog):
 		"""
 		Specify the speech answering the user's dialog
