@@ -39,6 +39,9 @@ class MeteoScrapper:
 		elif 'Fair' in self.skyData:
 			self.sky = u"relativement dégagé".encode('utf-8')
 
+		elif 'Cloudy' in self.skyData:
+			self.sky = "nuageux"
+
 		elif 'Partly' in self.skyData and 'cloudy' in self.skyData:
 			self.sky = "partiellement nuageux"
 

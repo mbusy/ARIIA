@@ -48,32 +48,10 @@ class AudioDeviceManager:
 
 
 
-	def callback(self, recognizer, audio):
-		"""
-		Callback method allowing to stop the recording
-
-		Parameters :
-			recognizer - The recognizer (not used here, we use self.recognizer)
-			audio - The audio (not used here, we use self.audio)
-		"""
-
-		try:
-			self.speech += recognizer.recognize_google(audio, language='fr') + " "
-
-		except sr.UnknownValueError:
-			print "Could not understand audio"
-
-		except sr.RequestError as e:
-			print "Could not request results from online services : " + str(e)
-
-
-
 	def listenAndCreateSpeech(self):
 		"""
 		Get an audio signal and convert it to an exploitable speech
 		"""
-
-		self.speech = ""
 
 		if self.keyEventListener is not None:
 			self.keyEventListener.waitKeyEvent()
@@ -81,16 +59,22 @@ class AudioDeviceManager:
 		print "------------"
 		print "listening"
 
-		stopListening = self.recognizer.listen_in_background(self.microphone, self.callback)
-
-		if self.keyEventListener is not None:
-			self.keyEventListener.waitKeyEvent()
+		with self.microphone as source:
+			self.audio = self.recognizer.listen(source, timeout=10)
 		
 		print "------------"
 		print "computing"
-		stopListening()
+		
+		try:
+			self.speech = self.recognizer.recognize_google(self.audio, language='fr')
 
-		print "You said : " + self.speech
+		except sr.UnknownValueError:
+			print "Could not understand audio"
+
+		except sr.RequestError as e:
+			print "Could not request results from online services : " + str(e)
+
+		print "You >> " + self.speech
 		return self.speech
 
 
@@ -109,6 +93,7 @@ class AudioDeviceManager:
 			tts = gTTS(text=answer, lang='fr')
 			tts.save("../ressources/tts.mp3")
 
+			print "Ariia >> " + answer
 			self.playMp3File()
 
 		except sr.UnknownValueError:
