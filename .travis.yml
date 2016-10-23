@@ -10,6 +10,6 @@ python:
   - "3.6-dev" # 3.6 development branch
   - "nightly" # currently points to 3.7-dev
   
-install: "pip install -r urllib2 speech_recognition gtts mp3play cookielib bs4 unicodedata2 dill chatterbot"
+install: "pip install urllib2 speech_recognition gtts mp3play cookielib bs4 unicodedata2 dill chatterbot"
 
 script: nosetest
