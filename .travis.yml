@@ -4,4 +4,8 @@ python:
   
 install: "pip install SpeechRecognition gTTS mp3play beautifulsoup4 unicodedata2 dill ChatterBot"
 
-script: cd src/; python ariia.py;
+before_script: cd src
+
+script:
+  - py.test -v --color=yes --exitfirst --showlocals --durations=5
+  - python ariia.py
