@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from ariia import ariia
-from ariia import audio_device_manager
 from ariia import history_scrapper
 from ariia import meteo_scrapper
 from ariia import shopping_list_manager
