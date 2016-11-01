@@ -12,8 +12,5 @@ def main():
 	meteo = meteo_scrapper.MeteoScrapper()
 	print "Creation of the meteo scrapper successful"
 
-	shopping = shopping_list_manager.ShoppingListManager(audioDevice)
-	print "Creation of the shopping list manager successful"
-
 if __name__ == "__main__":
 	main()
