@@ -1,0 +1,7 @@
+#Gitignore file for the Ariia project
+
+*.pyc
+*.mp3
+
+
+shopping_lists
