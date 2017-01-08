@@ -312,23 +312,23 @@ class Ariia:
 
             try:
 
-                self.meteoScrapper.getMeteo(city)
+                sky, temperature, wind = self.meteoScrapper.getMeteo(city)
                 self.answer += u" à ".encode('utf-8') + city.encode('utf-8') + ": "
 
                 if self.meteoScrapper.sky is not "":
                     self.answer += " le ciel est "
-                    self.answer += self.meteoScrapper.sky
+                    self.answer += sky
                     self.answer += ", "
 
                 if self.meteoScrapper.temperature is not "":
                     self.answer += " Il fait"
-                    self.answer += self.meteoScrapper.temperature
+                    self.answer += temperature
                     self.answer += u" degrés".encode('utf-8')
                     self.answer += ", "
 
                 if self.meteoScrapper.wind is not "":
                     self.answer += " Il y a "
-                    self.answer += self.meteoScrapper.wind
+                    self.answer += wind
                     self.answer += "."
 
             except urllib2.HTTPError:

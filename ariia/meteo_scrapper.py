@@ -32,6 +32,10 @@ class MeteoScrapper:
 		Method used to translate the meteo data retreived from the website
 		"""
 
+		self.sky         = ""
+		self.temperature = ""
+		self.wind        = ""
+		
 		# Sky translation
 		if 'Clear' in self.skyData and 'sky' in self.skyData:
 			self.sky = u"dégagé".encode('utf-8')
@@ -69,7 +73,7 @@ class MeteoScrapper:
 			self.wind = u"une légère brise".encode('utf-8')
 
 		elif 'Moderate' in self.windData and 'breeze' in self.windData:
-			self.wind = u"une moyenne brise".encode('utf-8')		
+			self.wind = u"une moyenne brise".encode('utf-8')
 
 
 	def getMeteo(self, city):
@@ -78,6 +82,11 @@ class MeteoScrapper:
 
 		Parameters :
 			city - The targeted city
+
+		Returns:
+			sky - Data about the state of the sky
+			temperature - Data about the temperature
+			wind - Data about the wind
 		"""
 
 		self.city = city
@@ -99,8 +108,9 @@ class MeteoScrapper:
 
 		self.meteoTranslate()
 
+		return self.sky, self.temperature, self.wind
 		# For the debug
-		print '-----METEO-DEBUG------'
-		print self.skyData
-		print self.windData
-		print '----------------------'
+		# print '-----METEO-DEBUG------'
+		# print self.skyData
+		# print self.windData
+		# print '----------------------'

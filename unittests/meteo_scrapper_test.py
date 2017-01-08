@@ -57,19 +57,21 @@ class MeteoScrapperTest(unittest.TestCase):
 		self.assertIsInstance(scrapper, meteo_scrapper.MeteoScrapper)
 
 
-	def test_historicDescription(self):
+	def test_getMeteo(self):
 		"""
-		Test method to get historic description from wikipedia
+		Test method to get the meteo
 		"""
 
 		logging.info("Create scrapper")
-		scrapper = history_scrapper.HistoryScrapper()
+		scrapper = meteo_scrapper.MeteoScrapper()
 
-		logging.info("Get historic resume for Napoleon")
-		resume = scrapper.getHistoricDescription("Napoleon")
+		logging.info("Get meteo for Paris")
+		sky, temperature, wind = scrapper.getMeteo("Paris")
 
-		logging.info("Test if the resume is not empty")
-		self.assertNotEqual(resume, "")
+		logging.info("Test the meteo data obtained")
+		self.assertNotEqual(sky, "")
+        self.assertNotEqual(temperature, "")
+        self.assertNotEqual(wind, "")
 
 
 if __name__ == "__main__":
