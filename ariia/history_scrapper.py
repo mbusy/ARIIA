@@ -28,9 +28,12 @@ class HistoryScrapper:
 		"""
 		Get the historic description for the given historic name
 
-		Parameters :
+		Parameters:
 			historicName - The given historic name
-		""" 
+
+		Returns:
+			historicResume - The historic resume from wikipedia
+		"""
 
 		self.historicName  = historicName
 		historicNameURL    = ""
@@ -39,7 +42,7 @@ class HistoryScrapper:
 
 		if len(self.historicName) == 1:															# Historic name treatement
 			historicNameURL = historicName.pop()
-		
+
 		else:
 			historicNameURL = historicName.pop()
 
@@ -49,15 +52,15 @@ class HistoryScrapper:
 			historicNameURL = preHistoricNameURL + historicNameURL
 
 		historicNameURL = urllib2.quote(historicNameURL.encode('utf-8'))
-		
-		
+
+
 		url             = "https://fr.wikipedia.org/wiki/" + historicNameURL
 		httpRequest     = urllib2.Request(url)
 		page            = self.opener.open(httpRequest)
 		rawdata         = page.read()
-		
+
 		lines_of_data   = rawdata.split('\n')													# Treatement on rawdata
-		
+
 		special_lines = list()																	# Keep the resume
 		startIntro    = False
 		endIntro      = False
@@ -76,7 +79,7 @@ class HistoryScrapper:
 				endIntro   = False
 				break
 
-		
+
 		for line in special_lines:																# Get the resume
 			rawHistoricResume += line
 
@@ -84,13 +87,13 @@ class HistoryScrapper:
 
 		for script in soup(["script", "style"]):												# kill all script and style elements
 			script.extract()    																# rip it out
-		
+
 		text                = soup.get_text()													# get text
 		lines               = (line.strip() for line in text.splitlines())						# break into lines and remove leading and trailing space on each
 		chunks              = (phrase.strip() for line in lines for phrase in line.split("  "))	# break multi-headlines into a line each
 		text                = '\n'.join(chunk for chunk in chunks if chunk) 					# drop blank lines
-		text                = text.encode('utf-8', 'ignore')		
+		text                = text.encode('utf-8', 'ignore')
 		self.historicResume = text.decode('utf-8')
+
+		return self.historicResume
 		# print text.decode('utf-8')
-
-
