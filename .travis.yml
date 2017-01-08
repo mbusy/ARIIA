@@ -14,14 +14,15 @@ install:
   - "pip install unicodedata2"
   - "pip install dill "
   - "pip install logging"
+  - "pip install codecov"
   # - "pip install ChatterBot"
 
 before_script: echo @Preping the tests...
 
 script:
   - py.test -v --color=yes --exitfirst --showlocals --durations=5
-  - python -m unittests.history_scrapper_test
-  - python -m unittests.meteo_scrapper_test
+  - coverage run -m unittests.history_scrapper_test
+  - coverage run -m unittests.meteo_scrapper_test
 
 after_success:
-- bash <(curl -s https://codecov.io/bash)
+- codecov --token=f60e1429-5609-4466-b7a2-9294e0d25b79
