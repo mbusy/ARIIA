@@ -1,5 +1,0 @@
-INFO    191 MainThread Create the object (history_scrapper_test.53)
-INFO    191 MainThread Test object type (history_scrapper_test.56)
-INFO    192 MainThread Create scrapper (history_scrapper_test.65)
-INFO    192 MainThread Get historic resume for Napoleon (history_scrapper_test.68)
-INFO   1695 MainThread Test if the resume is not empty (history_scrapper_test.71)

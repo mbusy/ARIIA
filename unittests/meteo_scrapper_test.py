@@ -66,12 +66,11 @@ class MeteoScrapperTest(unittest.TestCase):
 		scrapper = meteo_scrapper.MeteoScrapper()
 
 		logging.info("Get meteo for Paris")
-		sky, temperature, wind = scrapper.getMeteo("Paris")
+        sky, temperature, wind = scrapper.getMeteo("Paris")
+        meteoDataList          = [sky, temperature, wind]
 
 		logging.info("Test the meteo data obtained")
-		self.assertNotEqual(sky, "")
-        self.assertNotEqual(temperature, "")
-        self.assertNotEqual(wind, "")
+		self.assertNotIn("", meteoDataList)
 
 
 if __name__ == "__main__":
