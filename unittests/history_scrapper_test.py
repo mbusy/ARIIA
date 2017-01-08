@@ -55,6 +55,7 @@ class HistoryScrapperTest(unittest.TestCase):
 		self.assertIsInstance(scrapper, history_scrapper.HistoryScrapper)
 		logging.info("Object type correct")
 
+
 	def test_historicDescription(self):
 		"""
 		Test method to get historic description from wikipedia
@@ -65,6 +66,10 @@ class HistoryScrapperTest(unittest.TestCase):
 
 		logging.info("Get historic resume for Napoleon")
 		resume = scrapper.getHistoricDescription(["Napoleon"])
+		logging.info("Successfully got the resume")
+
+		logging.info("Get historic resume for Victor Hugo")
+		resume = scrapper.getHistoricDescription(["Victor", "Hugo"])
 		logging.info("Successfully got the resume")
 
 		logging.info("Test if the resume is not empty")
