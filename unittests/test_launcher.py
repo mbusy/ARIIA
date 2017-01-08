@@ -23,59 +23,31 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import logging
 import unittest
+import logging
 
-from ariia import history_scrapper
-
-class HistoryScrapperTest(unittest.TestCase):
-	"""
-	Unitest for the History Scrapper
-	"""
-
-
-	def setUp(self):
-		"""
-		Setup for the test
-		"""
-
-        pass
-
-
-	def test_constructor(self):
-		"""
-		Test the creation of the object
-		"""
-
-		logging.info("Create the object")
-		scrapper = history_scrapper.HistoryScrapper()
-		logging.info("Object correctly created")
-
-		logging.info("Test object type")
-		self.assertIsInstance(scrapper, history_scrapper.HistoryScrapper)
-		logging.info("Object type correct")
-
-	def test_historicDescription(self):
-		"""
-		Test method to get historic description from wikipedia
-		"""
-
-		logging.info("Get historic description from wikipedia")
-		scrapper = history_scrapper.HistoryScrapper()
-
-		logging.info("Get historic resume for Napoleon")
-		resume = scrapper.getHistoricDescription(["Napoleon"])
-		logging.info("Successfully got the resume")
-
-		logging.info("Test if the resume is not empty")
-		self.assertNotEqual(resume, "")
-		logging.info("Resume not empty")
+import meteo_scrapper_test
+import data_container_test
+import history_scrapper_test
 
 
 if __name__ == "__main__":
-	logging.basicConfig(filename='unittests/logs/history_scrapper_test.log',
+
+	logging.basicConfig(filename='unittests/logs/unittests.log',
 		level=logging.DEBUG,
 		format='%(levelname)s %(relativeCreated)6d %(threadName)s %(message)s (%(module)s.%(lineno)d)',
 		filemode='w')
 
-	unittest.main()
+	testClasses = [meteo_scrapper_test.MeteoScrapperTest,
+		data_container_test.DataContainerTest,
+		history_scrapper_test.HistoryScrapperTest]
+
+	testsList  = list()
+	loader 	   = unittest.TestLoader()
+
+	for testClass in testClasses:
+		testsList.append(loader.loadTestsFromTestCase(testClass))
+
+	finalTestList = unittest.TestSuite(testsList)
+	testRunner 	  = unittest.TextTestRunner()
+	results 	  = testRunner.run(finalTestList)

@@ -3,6 +3,4 @@
 *.pyc
 *.mp3
 
-.coverage
-coverage.xml
 shopping_lists

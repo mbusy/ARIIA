@@ -39,10 +39,7 @@ class MeteoScrapperTest(unittest.TestCase):
 		Setup for the test
 		"""
 
-        logging.basicConfig(filename='unittests/logs/meteo_scrapper_test.log',
-			level=logging.DEBUG,
-			format='%(levelname)s %(relativeCreated)6d %(threadName)s %(message)s (%(module)s.%(lineno)d)',
-			filemode='w')
+        pass
 
 
 	def test_constructor(self):
@@ -77,4 +74,9 @@ class MeteoScrapperTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
+	logging.basicConfig(filename='unittests/logs/meteo_scrapper_test.log',
+		level=logging.DEBUG,
+		format='%(levelname)s %(relativeCreated)6d %(threadName)s %(message)s (%(module)s.%(lineno)d)',
+		filemode='w')
+
 	unittest.main()

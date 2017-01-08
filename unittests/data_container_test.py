@@ -39,10 +39,7 @@ class DataContainerTest(unittest.TestCase):
 		Setup for the test
 		"""
 
-        logging.basicConfig(filename='unittests/logs/data_container_test.log',
-			level=logging.DEBUG,
-			format='%(levelname)s %(relativeCreated)6d %(threadName)s %(message)s (%(module)s.%(lineno)d)',
-			filemode='w')
+        pass
 
 
 	def test_loadingDataContainer(self):
@@ -185,4 +182,9 @@ class DataContainerTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
+	logging.basicConfig(filename='unittests/logs/data_container_test.log',
+		level=logging.DEBUG,
+		format='%(levelname)s %(relativeCreated)6d %(threadName)s %(message)s (%(module)s.%(lineno)d)',
+		filemode='w')
+		
 	unittest.main()
