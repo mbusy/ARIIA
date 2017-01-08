@@ -52,25 +52,28 @@ class MeteoScrapperTest(unittest.TestCase):
 
 		logging.info("Create the object")
 		scrapper = meteo_scrapper.MeteoScrapper()
+		logging.info("Object correctly created")
 
 		logging.info("Test object type")
 		self.assertIsInstance(scrapper, meteo_scrapper.MeteoScrapper)
-
+		logging.info("Object type correct")
 
 	def test_getMeteo(self):
 		"""
 		Test method to get the meteo
 		"""
 
-		logging.info("Create scrapper")
+		logging.info("Get the meteo, instanciate new meteo scrapper")
 		scrapper = meteo_scrapper.MeteoScrapper()
 
 		logging.info("Get meteo for Paris")
 		sky, temperature, wind = scrapper.getMeteo("Paris")
 		meteoDataList          = [sky, temperature, wind]
+		logging.info("Successfully got the meteo")
 
 		logging.info("Test the meteo data obtained")
 		self.assertNotIn("", meteoDataList)
+		logging.info("Meteo parameters not empty, success")
 
 
 if __name__ == "__main__":
