@@ -13,8 +13,8 @@ install:
   - "pip install beautifulsoup4"
   - "pip install unicodedata2"
   - "pip install dill "
-  - "pip install ChatterBot"
   - "pip install logging"
+  # - "pip install ChatterBot"
 
 before_script: echo @Preping the tests...
 
