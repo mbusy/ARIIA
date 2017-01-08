@@ -26,11 +26,11 @@
 import logging
 import unittest
 
-from ariia import history_scrapper
+from ariia import meteo_scrapper
 
-class HistoryScrapperTest(unittest.TestCase):
+class MeteoScrapperTest(unittest.TestCase):
 	"""
-	Unitest for the History Scrapper
+	Unitest for the Meteo Scrapper
 	"""
 
 
@@ -39,7 +39,7 @@ class HistoryScrapperTest(unittest.TestCase):
 		Setup for the test
 		"""
 
-        logging.basicConfig(filename='unittests/logs/history_scrapper_test.log',
+        logging.basicConfig(filename='unittests/logs/meteo_scrapper_test.log',
 			level=logging.DEBUG,
 			format='%(levelname)s %(relativeCreated)6d %(threadName)s %(message)s (%(module)s.%(lineno)d)',
 			filemode='w')
@@ -51,10 +51,10 @@ class HistoryScrapperTest(unittest.TestCase):
 		"""
 
 		logging.info("Create the object")
-		scrapper = history_scrapper.HistoryScrapper()
+		scrapper = meteo_scrapper.MeteoScrapper()
 
 		logging.info("Test object type")
-		self.assertIsInstance(scrapper, history_scrapper.HistoryScrapper)
+		self.assertIsInstance(scrapper, meteo_scrapper.MeteoScrapper)
 
 
 	def test_historicDescription(self):
@@ -66,7 +66,7 @@ class HistoryScrapperTest(unittest.TestCase):
 		scrapper = history_scrapper.HistoryScrapper()
 
 		logging.info("Get historic resume for Napoléon")
-		resume = scrapper.getHistoricDescription(["Napoléon"])
+		resume = scrapper.getHistoricDescription("Napoléon")
 
 		logging.info("Test if the resume is not empty")
 		self.assertNotEqual(resume, "")
