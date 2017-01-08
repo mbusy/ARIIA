@@ -51,10 +51,10 @@ class HistoryScrapperTest(unittest.TestCase):
 		"""
 
 		logging.info("Create the object")
-		self.scrapper = history_scrapper.HistoryScrapper()
+		scrapper = history_scrapper.HistoryScrapper()
 
 		logging.info("Test object type")
-		self.assertIsInstance(self.scrapper, history_scrapper.HistoryScrapper)
+		self.assertIsInstance(scrapper, history_scrapper.HistoryScrapper)
 
 
 	def test_historicDescription(self):
@@ -62,12 +62,15 @@ class HistoryScrapperTest(unittest.TestCase):
 		Test method to get historic description from wikipedia
 		"""
 
+		logging.info("Create scrapper")
+		scrapper = history_scrapper.HistoryScrapper()
+
 		logging.info("Get historic resume for Napoléon")
-		resume = self.scrapper.getHistoricDescription("Napoléon")
+		resume = scrapper.getHistoricDescription("Napoléon")
 
 		logging.info("Test if the resume is not empty")
 		self.assertNotEqual(resume, "")
-		
+
 
 if __name__ == "__main__":
 	unittest.main()
