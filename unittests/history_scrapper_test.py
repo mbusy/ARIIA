@@ -65,8 +65,8 @@ class HistoryScrapperTest(unittest.TestCase):
 		logging.info("Create scrapper")
 		scrapper = history_scrapper.HistoryScrapper()
 
-		logging.info("Get historic resume for Napoléon")
-		resume = scrapper.getHistoricDescription(["Napoléon"])
+		logging.info("Get historic resume for Napoleon")
+		resume = scrapper.getHistoricDescription(["Napoleon"])
 
 		logging.info("Test if the resume is not empty")
 		self.assertNotEqual(resume, "")
