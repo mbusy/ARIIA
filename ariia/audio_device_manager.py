@@ -37,10 +37,10 @@ class AudioDeviceManager:
 		Calibration of the noise for the
 		microphone
 		"""
-		
+
 		print ("a moment of silence...")
 		with self.microphone as source : self.recognizer.adjust_for_ambient_noise(source)
-		
+
 		if self.recognizer.energy_threshold < self.minThresh:
 			self.recognizer.energy_threshold = self.minThresh
 
@@ -61,10 +61,10 @@ class AudioDeviceManager:
 
 		with self.microphone as source:
 			self.audio = self.recognizer.listen(source, timeout=10)
-		
+
 		print "------------"
 		print "computing"
-		
+
 		try:
 			self.speech = self.recognizer.recognize_google(self.audio, language='fr')
 
@@ -85,7 +85,7 @@ class AudioDeviceManager:
 
 		Parameters :
 			answer - The answer to be spoken
-			file - File where the mp3 data is storred, 
+			file - File where the mp3 data is storred,
 				   ../ressources/tts.mp3 is the default value.
 		"""
 
@@ -107,10 +107,10 @@ class AudioDeviceManager:
 	def playMp3File(self, file="../ressources/tts.mp3"):
 		"""
 		Play an mp3 file
-		
+
 		Paramters :
-			file - File where the mp3 data is storred, 
-				   ../ressources/tts.mp3 is the default value.        
+			file - File where the mp3 data is storred,
+				   ../ressources/tts.mp3 is the default value.
 		"""
 
 		try:
