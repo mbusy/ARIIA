@@ -1,0 +1,5 @@
+INFO     72 MainThread Create the object (meteo_scrapper_test.53)
+INFO     73 MainThread Test object type (meteo_scrapper_test.56)
+INFO     73 MainThread Create scrapper (meteo_scrapper_test.65)
+INFO     74 MainThread Get meteo for Paris (meteo_scrapper_test.68)
+INFO    300 MainThread Test the meteo data obtained (meteo_scrapper_test.72)
