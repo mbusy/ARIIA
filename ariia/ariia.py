@@ -2,7 +2,7 @@
 
 import time
 import urllib2
- 
+
 import audio_device_manager as adm
 import key_event_listener as kel
 import talk_manager as tm
@@ -21,7 +21,7 @@ class Ariia:
         """
         Constructor
         """
-        
+
         self.keyEventListener   = kel.KeyEventListener()
         self.audioDeviceManager = adm.AudioDeviceManager(self.keyEventListener)
         self.talkManager        = tm.TalkManager()
@@ -41,7 +41,7 @@ class Ariia:
 
     def cleanStop(self):
         """
-        Used to correctly stop all the active tasks 
+        Used to correctly stop all the active tasks
         """
 
         self.keyEventListener.unregisterListener()
@@ -50,10 +50,10 @@ class Ariia:
 
     def interaction(self):
         """
-        Interact with the user, main interface 
+        Interact with the user, main interface
         between Ariia and the user.
         """
-        
+
         self.speech = self.audioDeviceManager.listenAndCreateSpeech()
         self.analyseSpeech()
         self.audioDeviceManager.speakAnswer(self.answer)
@@ -70,7 +70,7 @@ class Ariia:
         self.keywords["date"]       = False
         self.keywords["jour"]       = False
         self.keywords["heure"]      = False
-        self.keywords["meteo"]      = False        
+        self.keywords["meteo"]      = False
         self.keywords["lHeure"]     = False
         self.keywords["liste"]      = False
         self.keywords["courses"]    = False
@@ -139,7 +139,7 @@ class Ariia:
 
             elif word.lower() == "sommes-nous":
                 self.keywords["sommesNous"] = True
-            
+
             elif word.lower() == unicode("météo", 'utf-8'):
                 self.keywords["meteo"] = True
 
@@ -188,7 +188,7 @@ class Ariia:
 
         if self.keywords["date"] and self.keywords["est"] or self.keywords["date"] or self.keywords["jour"] and self.keywords["sommesNous"]:
             self.giveDate()
-        
+
         if self.keywords["meteo"]:
             self.giveMeteo()
 
@@ -285,7 +285,7 @@ class Ariia:
             month = "novembre"
         elif currentTime[1] == 12:
             month = "decembre"
-        
+
         self.answer += " Nous sommes le " + str(currentTime[2]) + month + str(currentTime[0]) + "."
 
 
@@ -303,7 +303,7 @@ class Ariia:
                     letterUpper = letter.upper()
                     if letter == letterUpper:
                         self.cityList.append(word)
-                    
+
                     break
 
         self.answer += u" voici la météo : ".encode('utf-8')
@@ -311,7 +311,7 @@ class Ariia:
         for city in self.cityList:
 
             try:
-                
+
                 self.meteoScrapper.getMeteo(city)
                 self.answer += u" à ".encode('utf-8') + city.encode('utf-8') + ": "
 
@@ -353,13 +353,11 @@ class Ariia:
                     if letter == letterUpper:
                         historicName.append(word)
                         historicNameStr += word + " "
-                    
+
                     break
 
         try:
-            
-            self.historyScrapper.getHistoricDescription(historicName)
-            self.answer += self.historyScrapper.historicResume
+            self.answer += self.historyScrapper.getHistoricDescription(historicName)
 
         except Exception:
             self.answer += u"Je n'ai pas de données historiques pour le personnage : ".encode('utf-8')
@@ -374,7 +372,7 @@ class Ariia:
         """
 
         self.shoppingListManager = slm.ShoppingListManager(self.audioDeviceManager)
-        self.shoppingListManager.manageShoppingLists()    
+        self.shoppingListManager.manageShoppingLists()
         self.answer = "Je ferme mon application de liste de courses."
 
 

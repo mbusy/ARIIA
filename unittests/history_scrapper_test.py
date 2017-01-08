@@ -23,21 +23,51 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-__author__     = "Maxime Busy"
-__copyright__  = "Copyright 2017, ARIIA"
-__license__    = "MIT"
-__version__    = "0.0.4"
-__email__      = "mbusy@aldebaran.com"
-__status__     = "Developement"
+import logging
+import unittest
+
+from ariia import history_scrapper
+
+class HistoryScrapperTest(unittest.TestCase):
+	"""
+	Unitest for the History Scrapper
+	"""
 
 
-def main():
-    """
-    Main method
-    """
+	def setUp(self):
+		"""
+		Setup for the test
+		"""
 
-    pass
+        logging.basicConfig(filename='unittests/logs/history_scrapper_test.log',
+			level=logging.DEBUG,
+			format='%(levelname)s %(relativeCreated)6d %(threadName)s %(message)s (%(module)s.%(lineno)d)',
+			filemode='w')
 
+
+	def test_constructor(self):
+		"""
+		Test the creation of the object
+		"""
+
+		logging.info("Create the object")
+		self.scrapper = history_scrapper.HistoryScrapper()
+
+		logging.info("Test object type")
+		self.assertIsInstance(self.scrapper, history_scrapper.HistoryScrapper)
+
+
+	def test_historicDescription(self):
+		"""
+		Test method to get historic description from wikipedia
+		"""
+
+		logging.info("Get historic resume for Napoléon")
+		resume = self.scrapper.getHistoricDescription("Napoléon")
+
+		logging.info("Test if the resume is not empty")
+		self.assertNotEqual(resume, "")
+		
 
 if __name__ == "__main__":
-    main()
+	unittest.main()

@@ -1,11 +1,20 @@
 language: python
 python:
   - "2.7"
-  
-install: "pip install SpeechRecognition gTTS mp3play beautifulsoup4 unicodedata2 dill ChatterBot"
+
+install:
+  - "pip install SpeechRecognition"
+  - "pip install gTTS"
+  - "pip install mp3play"
+  - "pip install beautifulsoup4"
+  - "pip install unicodedata2"
+  - "pip install dill "
+  - "pip install ChatterBot"
+  - "pip install logging"
+  - "pip install unittest"
 
 before_script: echo @Preping the tests...
 
 script:
   - py.test -v --color=yes --exitfirst --showlocals --durations=5
-  - python tests.py
+  - python -m unittests.history_scrapper_test
