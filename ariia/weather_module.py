@@ -34,4 +34,6 @@ class WeatherModule:
 		"""
 		Constructor
 		"""
-		pass
+
+		apiKey = 00000
+		
