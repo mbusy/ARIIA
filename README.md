@@ -2,6 +2,9 @@
 
 __ARIIA__ stands for Autonomous Reconaissance Intelligence Integration Assistant. When completed, this assistant is going to be the french Jarvis/Alfred.
 
+## Description of use
+_Coming soon_
+
 ## Instalation
 Get the project, go to the ariia folder
 > cd ARIIA/
