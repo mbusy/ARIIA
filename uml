@@ -1,0 +1,43 @@
+@startuml
+
+namespace ariia {
+
+    Core    *-- WeatherModule
+    Core    *-- LightControlModule
+    Core    *-- TelevisionControlModule
+    Core    *-- Server
+    Module <|-- WeatherModule
+    Module <|-- LightControlModule
+    Module <|-- TelevisionControlModule
+
+    class Core {
+        - WeatherModule weather
+        - LightControlModule light
+        - TelevisionControlModule television
+
+        + void switchLight(int lightId, bool status)
+        + json getWeather(String city, String country)
+    }
+
+    class Server {
+
+    }
+
+    abstract class Module {
+
+    }
+
+    class WeatherModule {
+
+    }
+
+    class LightControlModule {
+
+    }
+
+    class TelevisionControlModule {
+
+    }
+}
+
+@enduml
