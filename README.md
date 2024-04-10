@@ -2,13 +2,9 @@
 
 __ARIIA__ stands for Autonomous Reconaissance Intelligence Integration Assistant.
 
-## Instalation
+## Installation
 Get the project, go to the ariia folder
 > cd ARIIA/
 
 and launch Ariia
 > python main.py
-
-
-## Functionalities
-_Description coming soon_
